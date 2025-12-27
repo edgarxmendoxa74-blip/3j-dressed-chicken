@@ -937,14 +937,58 @@ const AdminDashboard = () => {
                             </h3>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
                                 {(storeSettings.banner_images || []).map((url, i) => (
-                                    <div key={i} style={{ position: 'relative' }}>
-                                        <img src={url} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '12px' }} alt={`Banner ${i}`} />
-                                        <button type="button" onClick={() => removeBanner(i)} style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={14} /></button>
+                                    <div key={i} style={{ position: 'relative', overflow: 'hidden', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow)' }}>
+                                        <img src={url} style={{ width: '100%', height: '140px', objectFit: 'cover' }} alt={`Banner ${i}`} />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeBanner(i)}
+                                            style={{
+                                                position: 'absolute',
+                                                top: '10px',
+                                                right: '10px',
+                                                background: 'rgba(239, 68, 68, 0.9)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '50%',
+                                                width: '32px',
+                                                height: '32px',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                                                transition: 'all 0.2s'
+                                            }}
+                                            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                                            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                        >
+                                            <X size={18} />
+                                        </button>
+                                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.5)', color: 'white', padding: '5px 10px', fontSize: '0.7rem', textAlign: 'center' }}>
+                                            Banner {i + 1}
+                                        </div>
                                     </div>
                                 ))}
-                                <label style={{ height: '120px', border: '2px dashed #cbd5e1', borderRadius: '12px', background: '#f8fafc', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
-                                    <Plus size={24} />
-                                    <span style={{ fontSize: '0.8rem' }}>Upload Image</span>
+                                <label style={{
+                                    height: '140px',
+                                    border: '3px dashed var(--primary)',
+                                    borderRadius: '16px',
+                                    background: '#fff5f5',
+                                    color: 'var(--primary)',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '10px',
+                                    transition: 'all 0.3s',
+                                    fontWeight: 700
+                                }}
+                                    onMouseOver={(e) => { e.currentTarget.style.background = '#fee2e2'; e.currentTarget.style.borderColor = 'var(--primary-dark)'; }}
+                                    onMouseOut={(e) => { e.currentTarget.style.background = '#fff5f5'; e.currentTarget.style.borderColor = 'var(--primary)'; }}
+                                >
+                                    <Plus size={32} />
+                                    <span style={{ fontSize: '0.9rem' }}>Add New Banner</span>
                                     <input type="file" accept="image/*" onChange={handleBannerUpload} style={{ display: 'none' }} />
                                 </label>
                             </div>

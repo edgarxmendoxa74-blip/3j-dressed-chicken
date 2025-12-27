@@ -16,7 +16,9 @@ import {
     User,
     Trash2,
     Copy,
-    CreditCard
+    CreditCard,
+    ChevronLeft,
+    ChevronRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { categories as initialCategories, menuItems } from '../data/MenuData';
@@ -36,14 +38,14 @@ const Home = () => {
         { id: 'delivery', name: 'Delivery' }
     ]);
     const [storeSettings, setStoreSettings] = useState({
-        manualStatus: 'auto',
-        openTime: '16:00',
-        closeTime: '01:00',
-        storeName: 'Oesters Cafe and Resto',
+        manual_status: 'auto',
+        open_time: '16:00',
+        close_time: '01:00',
+        store_name: 'Oesters Cafe and Resto',
         address: 'Poblacion, El Nido, Palawan',
         contact: '09563713967',
-        logoUrl: '',
-        bannerImages: [
+        logo_url: '',
+        banner_images: [
             'https://images.unsplash.com/photo-1517701604599-bb29b565094d?auto=format&fit=crop&w=1200&q=80',
             'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=1200&q=80',
             'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80'
@@ -138,13 +140,21 @@ const Home = () => {
         fetchData();
     }, []);
 
-    // Slideshow effect
+    // Slideshow functions
+    const nextBanner = () => {
+        const count = (storeSettings.banner_images || []).length;
+        if (count > 0) setCurrentBannerIndex(prev => (prev + 1) % count);
+    };
+
+    const prevBanner = () => {
+        const count = (storeSettings.banner_images || []).length;
+        if (count > 0) setCurrentBannerIndex(prev => (prev - 1 + count) % count);
+    };
+
     useEffect(() => {
         const bannerCount = (storeSettings.banner_images || []).length;
         if (bannerCount === 0) return;
-        const timer = setInterval(() => {
-            setCurrentBannerIndex(prev => (prev + 1) % bannerCount);
-        }, 5000);
+        const timer = setInterval(nextBanner, 5000);
         return () => clearInterval(timer);
     }, [storeSettings.banner_images]);
 
@@ -184,7 +194,7 @@ const Home = () => {
         const cartItemId = `${item.id}-${options.variation?.name || ''}-${options.flavor || ''}-${options.addons.map(a => a.name).join(',')}`;
         const existing = cart.find(i => i.cartItemId === cartItemId);
 
-        const price = options.variation ? options.variation.price : (item.promoPrice || item.price);
+        const price = options.variation ? options.variation.price : (item.promo_price || item.price);
         const addonsPrice = options.addons.reduce((sum, a) => sum + a.price, 0);
         const finalPrice = price + addonsPrice;
 
@@ -348,6 +358,8 @@ Thank you!`.trim();
                                 }}
                             />
                         ))}
+                        <button onClick={prevBanner} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.7)', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer', zIndex: 10 }}><ChevronLeft size={24} color="var(--primary)" /></button>
+                        <button onClick={nextBanner} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.7)', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer', zIndex: 10 }}><ChevronRight size={24} color="var(--primary)" /></button>
                     </div>
                 </div>
             </section>
@@ -541,23 +553,23 @@ Thank you!`.trim();
                                                 return (
                                                     <div style={{ textAlign: 'center' }}>
                                                         <h4 style={{ color: 'var(--primary)', marginBottom: '15px' }}>Send {method.name} Payment</h4>
-                                                        {method.qrUrl && (
+                                                        {method.qr_url && (
                                                             <div style={{ background: 'white', padding: '10px', borderRadius: '12px', display: 'inline-block', marginBottom: '20px' }}>
-                                                                <img src={method.qrUrl} style={{ width: '180px', height: '180px', borderRadius: '10px', objectFit: 'contain' }} alt="QR Code" />
+                                                                <img src={method.qr_url} style={{ width: '180px', height: '180px', borderRadius: '10px', objectFit: 'contain' }} alt="QR Code" />
                                                             </div>
                                                         )}
                                                         <div style={{ background: 'white', padding: '15px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                                             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '5px' }}>Account Number</div>
                                                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '8px' }}>
-                                                                <div style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--primary)' }}>{method.accountNumber}</div>
+                                                                <div style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--primary)' }}>{method.account_number}</div>
                                                                 <button
-                                                                    onClick={() => { navigator.clipboard.writeText(method.accountNumber); alert('Copied!'); }}
+                                                                    onClick={() => { navigator.clipboard.writeText(method.account_number); alert('Copied!'); }}
                                                                     style={{ border: 'none', background: 'var(--primary)', color: 'white', borderRadius: '6px', padding: '6px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600, fontSize: '0.8rem' }}
                                                                 >
                                                                     <Copy size={14} /> Copy
                                                                 </button>
                                                             </div>
-                                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>{method.accountName}</div>
+                                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>{method.account_name}</div>
                                                         </div>
                                                     </div>
                                                 );
