@@ -1,36 +1,40 @@
-# Bestdeal OR/CR Assistance Website
+# Oesters Cafe and Resto
 
-A full-stack website for vehicle OR/CR assistance service.
+A premium web application for Oesters Cafe and Resto, specializing in fresh oysters, artisanal coffee, and a vibrant dining experience.
+
+## Features
+- **Dynamic Menu**: Real-time menu management with categories, variations, and add-ons.
+- **Store Status**: Automatic and manual toggle for store opening/closing hours.
+- **Order Management**: Checkout integration with Facebook Messenger for seamless ordering.
+- **Admin Dashboard**: Full CRUD for menu items and categories, order history, and store settings.
+- **Thermal Printing**: Built-in support for 57mm thermal receipts.
+- **Responsive Design**: Fully optimized for mobile and desktop views.
 
 ## Tech Stack
-- Frontend: React (Vite)
-- Backend: Firebase (Auth & Firestore)
-- Styling: Plain CSS
+- **Frontend**: React (Vite)
+- **Database/Backend**: Supabase (Schema provided in `supabase_schema.sql`)
+- **Icons**: Lucide React
+- **Styling**: Vanilla CSS with modern aesthetics
 
 ## Setup Instructions
 
-1. **Firebase Project Setup:**
-   - Create a new project in the Firebase Console.
-   - Enable **Authentication** (Email/Password).
-   - Enable **Cloud Firestore** and use the rules provided in `firestore.rules`.
-   - Add a web app and copy the configuration.
-
-2. **Configuration:**
-   - Update `src/firebase.js` with your Firebase config.
-   - Initial settings will be created on the first load of the homepage or can be manually added to Firestore in the `settings` collection under the document `main`.
-
-3. **Running Locally:**
+1. **Install Dependencies:**
    ```bash
    npm install
+   ```
+
+2. **Run Locally:**
+   ```bash
    npm run dev
    ```
 
-4. **Admin Access:**
-   - Create an admin user in the Firebase Console (Authentication tab).
-   - Go to `/admin` to log in.
-   - Access the dashboard at `/admin/dashboard`.
+3. **Database Setup:**
+   - Create a project in Supabase.
+   - Run the contents of `supabase_schema.sql` in the SQL Editor to set up the tables.
 
-## Important Note
-- This service is for assistance and follow-up only.
-- No customer data is stored in the database.
-- Inquiries are redirected to Facebook Messenger.
+4. **Admin Access:**
+   - Navigate to `/login` to access the administrative dashboard.
+   - Manage store settings, hours, and menu items directly from the panel.
+
+## Credits
+Built with passion for quality in every bite.
