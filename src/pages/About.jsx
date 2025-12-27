@@ -1,0 +1,46 @@
+import React from 'react';
+import { UtensilsCrossed, Coffee, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+const About = () => {
+    return (
+        <div className="page-wrapper">
+            <header className="app-header">
+                <div className="container header-container">
+                    <Link to="/" className="brand">
+                        <img src="/logo.png" alt="Oesters Logo" style={{ height: '50px' }} />
+                        <div className="brand-text">
+                            <span className="brand-name">Oesters</span>
+                            <span className="brand-sub">Cafe & Resto</span>
+                        </div>
+                    </Link>
+                    <nav className="header-nav" style={{ display: 'flex', gap: '20px' }}>
+                        <Link to="/" className="nav-link">Home</Link>
+                        <Link to="/about" className="nav-link">About</Link>
+                        <Link to="/contact" className="nav-link">Contact</Link>
+                    </nav>
+                </div>
+            </header>
+
+
+
+            <main className="container" style={{ padding: '80px 0' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center', marginBottom: '80px' }}>
+                    <div>
+                        <h2 style={{ fontSize: '2.5rem', marginBottom: '30px', color: 'var(--primary)' }}>Where Seafood Meets Soul</h2>
+                        <p style={{ marginBottom: '20px', lineHeight: '1.8' }}>
+                            Oesters Cafe and Resto began with a simple idea: that high-quality seafood shouldn't be a luxury reserved only for the coast. Our founders, passionate foodies with a love for Bulacan's vibrant culture, set out to create a space where people could enjoy great food alongside artisanal coffee.
+                        </p>
+                        <p style={{ lineHeight: '1.8' }}>
+                            Every oyster we serve is hand-selected and handled with the utmost care, ensuring that every bite is as fresh as the day it was harvested. Our coffee is equally curated, with beans sourced from local growers and expertly prepared by our baristas.
+                        </p>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=800&q=80" alt="Cafe Interior" style={{ width: '100%', borderRadius: '20px', boxShadow: 'var(--shadow-lg)' }} />
+                </div>
+
+            </main>
+        </div>
+    );
+};
+
+export default About;
