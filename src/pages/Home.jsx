@@ -292,9 +292,9 @@ Thank you!`.trim();
         <div className="page-wrapper">
             {/* Store Closed Overlay */}
             {!isOpen && (
-                <div style={{ background: '#ef4444', color: 'white', textAlign: 'center', padding: '10px', position: 'sticky', top: 0, zIndex: 1200, fontWeight: 700 }}>
+                <div style={{ background: '#ef4444', color: 'white', textAlign: 'center', padding: '12px', position: 'sticky', top: 0, zIndex: 1200, fontWeight: 700, fontSize: '0.9rem' }}>
                     <Clock size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                    WE ARE CURRENTLY CLOSED. Orders are disabled. (Opening: {storeSettings.openTime} - Closing: {storeSettings.closeTime})
+                    WE ARE CURRENTLY CLOSED. Our operating hours are {storeSettings.open_time || '4:00 PM'} to {storeSettings.close_time || '1:00 AM'}. Orders are disabled.
                 </div>
             )}
 
@@ -303,8 +303,7 @@ Thank you!`.trim();
                     <Link to="/" className="brand">
                         <img src={storeSettings.logo_url || "/logo.png"} alt="Oesters Logo" style={{ height: '50px' }} />
                         <div className="brand-text">
-                            <span className="brand-name">{(storeSettings.store_name || 'Oesters').split(' ')[0]}</span>
-                            <span className="brand-sub">{(storeSettings.store_name || 'Cafe').split(' ').slice(1).join(' ')}</span>
+                            <span className="brand-name">{storeSettings.store_name || 'Oesters Cafe and Resto'}</span>
                         </div>
                     </Link>
 
@@ -325,10 +324,10 @@ Thank you!`.trim();
             {/* Hero Section */}
             <section className="hero-section" style={{ overflow: 'hidden' }}>
                 <div className="container hero-split">
-                    <div className="hero-content animate-fade-up">
+                    <div className="hero-content animate-fade-up" style={{ textAlign: 'center' }}>
                         <h1>Quality in <span style={{ color: 'var(--accent)' }}>every bite</span></h1>
                         <p>Experience our specialty dishes and coffee in Bulacan. We bring you the best flavors and a welcoming atmosphere.</p>
-                        <div style={{ display: 'flex', gap: '15px' }}>
+                        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
                             <a href="#menu" className="btn-accent" style={{ padding: '15px 30px' }}>Explore Menu</a>
                         </div>
                     </div>
