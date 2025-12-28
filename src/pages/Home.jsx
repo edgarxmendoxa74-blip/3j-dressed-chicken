@@ -34,7 +34,7 @@ const Home = () => {
     const [paymentSettings, setPaymentSettings] = useState([]);
     const [orderTypes, setOrderTypes] = useState([
         { id: 'dine-in', name: 'Dine-in' },
-        { id: 'pickup', name: 'Pickup' },
+        { id: 'pickup', name: 'Take Out' },
         { id: 'delivery', name: 'Delivery' }
     ]);
     const [storeSettings, setStoreSettings] = useState({

@@ -302,3 +302,9 @@ body {
     aspect-ratio: 16/9;
   }
 }
+
+@media (max-width: 900px) {
+  .brand-text {
+    display: none !important;
+  }
+}
