@@ -194,8 +194,8 @@ const Home = () => {
         const cartItemId = `${item.id}-${options.variation?.name || ''}-${options.flavor || ''}-${options.addons.map(a => a.name).join(',')}`;
         const existing = cart.find(i => i.cartItemId === cartItemId);
 
-        const price = options.variation ? options.variation.price : (item.promo_price || item.price);
-        const addonsPrice = options.addons.reduce((sum, a) => sum + a.price, 0);
+        const price = options.variation ? Number(options.variation.price) : Number(item.promo_price || item.price);
+        const addonsPrice = options.addons.reduce((sum, a) => sum + Number(a.price), 0);
         const finalPrice = price + addonsPrice;
 
         if (existing) {
@@ -321,9 +321,6 @@ Thank you!`.trim();
                 <div className="container header-container">
                     <Link to="/" className="brand">
                         <img src={storeSettings.logo_url || "/logo.png"} alt="Oesters Logo" style={{ height: '50px' }} />
-                        <div className="brand-text">
-                            <span className="brand-name">{storeSettings.store_name}</span>
-                        </div>
                     </Link>
 
                     <nav className="header-nav" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -505,7 +502,12 @@ Thank you!`.trim();
                             </div>
                         )}
 
-                        <button className="btn-primary" style={{ width: '100%', padding: '15px' }} onClick={() => addToCart(selectedProduct, selectionOptions)}>Add to Cart</button>
+                        <button className="btn-primary" style={{ width: '100%', padding: '15px', fontWeight: 700, fontSize: '1.1rem' }} onClick={() => addToCart(selectedProduct, selectionOptions)}>
+                            Add to Cart - ₱{(
+                                (selectionOptions.variation ? Number(selectionOptions.variation.price) : Number(selectedProduct.promo_price || selectedProduct.price)) +
+                                selectionOptions.addons.reduce((sum, a) => sum + Number(a.price), 0)
+                            )}
+                        </button>
                     </div>
                 </div>
             )}

@@ -365,7 +365,7 @@ const AdminDashboard = () => {
                     {tempVariations.map((v, i) => (
                         <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: '10px', alignItems: 'center' }}>
                             <input value={v.name} onChange={e => { const n = [...tempVariations]; n[i].name = e.target.value; setTempVariations(n); }} placeholder="Name" style={inputStyle} />
-                            <input type="number" value={v.price} onChange={e => { const n = [...tempVariations]; n[i].price = e.target.value; setTempVariations(n); }} placeholder="Price" style={inputStyle} />
+                            <input type="number" value={v.price} onChange={e => { const n = [...tempVariations]; n[i].price = Number(e.target.value); setTempVariations(n); }} placeholder="Price" style={inputStyle} />
                             <div style={{ display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}>
                                 <input type="checkbox" checked={v.disabled} onChange={e => { const n = [...tempVariations]; n[i].disabled = e.target.checked; setTempVariations(n); }} />
                                 <label style={{ fontSize: '0.75rem' }}>Disabled</label>
@@ -379,7 +379,7 @@ const AdminDashboard = () => {
                     {tempAddons.map((v, i) => (
                         <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: '10px', alignItems: 'center' }}>
                             <input value={v.name} onChange={e => { const n = [...tempAddons]; n[i].name = e.target.value; setTempAddons(n); }} placeholder="Name" style={inputStyle} />
-                            <input type="number" value={v.price} onChange={e => { const n = [...tempAddons]; n[i].price = e.target.value; setTempAddons(n); }} placeholder="Price" style={inputStyle} />
+                            <input type="number" value={v.price} onChange={e => { const n = [...tempAddons]; n[i].price = Number(e.target.value); setTempAddons(n); }} placeholder="Price" style={inputStyle} />
                             <div style={{ display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}>
                                 <input type="checkbox" checked={v.disabled} onChange={e => { const n = [...tempAddons]; n[i].disabled = e.target.checked; setTempAddons(n); }} />
                                 <label style={{ fontSize: '0.75rem' }}>Disabled</label>
