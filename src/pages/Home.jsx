@@ -197,7 +197,13 @@ const Home = () => {
         const variationPrice = options.variation ? Number(options.variation.price) : 0;
         const basePrice = Number(item.promo_price || item.price);
         // Use variation price if set (>0), otherwise use base price
-        const price = variationPrice > 0 ? variationPrice : basePrice;
+        // UPDATE: Specifically for Pork Ribs Barbeque, we make it additive
+        let price;
+        if (item.name?.toLowerCase().includes('pork ribs')) {
+            price = basePrice + variationPrice;
+        } else {
+            price = variationPrice > 0 ? variationPrice : basePrice;
+        }
         const addonsPrice = options.addons.reduce((sum, a) => sum + Number(a.price), 0);
         const finalPrice = price + addonsPrice;
 
@@ -328,8 +334,6 @@ Thank you!`.trim();
 
                     <nav className="header-nav" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                         <div style={{ display: 'flex', gap: '20px' }}>
-                            <Link to="/" className="nav-link">Home</Link>
-
                             <Link to="/contact" className="nav-link">Contact</Link>
                         </div>
                         <button className="btn-accent" onClick={() => setIsCartOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -528,9 +532,12 @@ Thank you!`.trim();
 
                         <button className="btn-primary" style={{ width: '100%', padding: '15px', fontWeight: 700, fontSize: '1.1rem' }} onClick={() => addToCart(selectedProduct, selectionOptions)}>
                             Add to Cart - ₱{(
-                                ((selectionOptions.variation && Number(selectionOptions.variation.price) > 0) ? Number(selectionOptions.variation.price) : Number(selectedProduct.promo_price || selectedProduct.price)) +
-                                selectionOptions.addons.reduce((sum, a) => sum + Number(a.price), 0)
-                            )}
+                                (selectionOptions.variation && Number(selectionOptions.variation.price) > 0)
+                                    ? (selectedProduct.name?.toLowerCase().includes('pork ribs')
+                                        ? Number(selectedProduct.promo_price || selectedProduct.price) + Number(selectionOptions.variation.price)
+                                        : Number(selectionOptions.variation.price))
+                                    : Number(selectedProduct.promo_price || selectedProduct.price)
+                            ) + selectionOptions.addons.reduce((sum, a) => sum + Number(a.price), 0)}
                         </button>
                     </div>
                 </div>
