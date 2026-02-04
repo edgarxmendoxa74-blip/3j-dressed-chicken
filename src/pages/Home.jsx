@@ -281,9 +281,14 @@ const Home = () => {
         });
 
         // Also save to LocalStorage as a local backup
-        const localOrder = { ...newOrder, id: Date.now(), timestamp: new Date().toISOString() };
-        const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-        localStorage.setItem('orders', JSON.stringify([...existingOrders, localOrder]));
+        try {
+            const localOrder = { ...newOrder, id: Date.now(), timestamp: new Date().toISOString() };
+            const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+            localStorage.setItem('orders', JSON.stringify([...existingOrders, localOrder]));
+        } catch (err) {
+            console.warn('Failed to save order to localStorage (quota exceeded?):', err);
+            // Ignore error so ordering proceeds
+        }
 
         // --- PREPARE MESSENGER MSG ---
         const orderDetailsStr = itemDetails.join('\n');
@@ -308,8 +313,10 @@ TOTAL AMOUNT: ₱${cartTotal}
 
 Thank you!`.trim();
 
-        const messengerUrl = `https://m.me/61579032505526?text=${encodeURIComponent(message)}`;
-        window.open(messengerUrl, '_blank');
+        const messengerUrl = `https://m.me/61587544585902?text=${encodeURIComponent(message)}`;
+
+        // Use window.location.href for better mobile deep-linking support, fallback to open
+        window.location.href = messengerUrl;
 
         // Optionally clear cart
         // setCart([]); 

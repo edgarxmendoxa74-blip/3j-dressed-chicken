@@ -167,6 +167,13 @@ body {
   padding: 30px 0;
 }
 
+@media (max-width: 640px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
 .menu-item-card {
   background: var(--card-bg);
   border-radius: var(--radius);
