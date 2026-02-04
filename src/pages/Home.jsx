@@ -313,14 +313,86 @@ TOTAL AMOUNT: ₱${cartTotal}
 
 Thank you!`.trim();
 
-        const messengerUrl = `https://m.me/61587544585902?text=${encodeURIComponent(message)}`;
+        const pageId = '61587544585902';
+        const encodedMessage = encodeURIComponent(message);
 
-        // Use window.location.href for better mobile deep-linking support, fallback to open
-        window.location.href = messengerUrl;
+        // Detect mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const isAndroid = /Android/i.test(navigator.userAgent);
 
-        // Optionally clear cart
-        // setCart([]); 
+        // Close checkout modal first
         setIsCheckoutOpen(false);
+
+        if (isMobile) {
+            // For mobile devices, try multiple approaches
+            if (isIOS) {
+                // iOS: Use fb-messenger scheme first, then fallback
+                const messengerAppUrl = `fb-messenger://user-thread/${pageId}`;
+                const webFallback = `https://www.messenger.com/t/${pageId}`;
+
+                // Try to open Messenger app
+                const startTime = Date.now();
+                window.location.href = messengerAppUrl;
+
+                // If app doesn't open within 1.5 seconds, redirect to web version
+                setTimeout(() => {
+                    if (Date.now() - startTime < 2000) {
+                        // App likely opened, do nothing
+                    }
+                    // User can manually copy the message if needed
+                }, 1500);
+
+                // Also try opening in new window as backup
+                setTimeout(() => {
+                    if (document.visibilityState !== 'hidden') {
+                        // Still on page, app didn't open - try web version
+                        window.open(webFallback, '_blank');
+                    }
+                }, 2000);
+            } else if (isAndroid) {
+                // Android: Use intent URL for better app detection
+                const intentUrl = `intent://user/${pageId}#Intent;scheme=fb-messenger;package=com.facebook.orca;end`;
+                const webFallback = `https://www.messenger.com/t/${pageId}`;
+
+                // Try intent first
+                window.location.href = intentUrl;
+
+                // Fallback to web after delay
+                setTimeout(() => {
+                    if (document.visibilityState !== 'hidden') {
+                        window.open(webFallback, '_blank');
+                    }
+                }, 1500);
+            } else {
+                // Other mobile: Use m.me with web fallback
+                const mmeUrl = `https://m.me/${pageId}`;
+                window.location.href = mmeUrl;
+            }
+
+            // Show a helpful alert with the message for mobile users to copy
+            setTimeout(() => {
+                if (document.visibilityState !== 'hidden') {
+                    // Still on page - show copy option
+                    const copyMessage = confirm(
+                        'If Messenger did not open automatically, click OK to copy your order message. You can then paste it in Messenger manually.'
+                    );
+                    if (copyMessage) {
+                        navigator.clipboard.writeText(message).then(() => {
+                            alert('Order message copied! Open Messenger and paste it to send your order.');
+                            window.open(`https://www.messenger.com/t/${pageId}`, '_blank');
+                        }).catch(() => {
+                            // Clipboard failed, show text for manual copy
+                            prompt('Copy this message and send it via Messenger:', message);
+                        });
+                    }
+                }
+            }, 3000);
+        } else {
+            // Desktop: Use m.me URL which works well
+            const messengerUrl = `https://m.me/${pageId}?text=${encodedMessage}`;
+            window.open(messengerUrl, '_blank');
+        }
     };
 
     const formatTime = (timeStr) => {
