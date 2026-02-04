@@ -41,15 +41,11 @@ const Home = () => {
         manual_status: 'auto',
         open_time: '10:00',
         close_time: '01:00',
-        store_name: '',
-        address: 'Poblacion, El Nido, Palawan',
-        contact: '09563713967',
+        store_name: '3J Dressed Chicken Store',
+        address: '',
+        contact: '',
         logo_url: '',
-        banner_images: [
-            'https://images.unsplash.com/photo-1517701604599-bb29b565094d?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80'
-        ]
+        banner_images: []
     });
 
     const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
@@ -92,8 +88,8 @@ const Home = () => {
                     setCategories(parsed);
                     if (parsed.length > 0) setActiveCategory(parsed[0].id);
                 } else {
-                    setCategories([{ id: 'oysters', name: 'Oysters' }, { id: 'coffee', name: 'Coffee' }, { id: 'pasta', name: 'Pasta' }]);
-                    setActiveCategory('oysters');
+                    setCategories([{ id: 'fresh-chicken', name: 'Fresh Chicken' }, { id: 'frozen-goods', name: 'Frozen Goods' }, { id: 'marinated', name: 'Marinated Items' }]);
+                    setActiveCategory('fresh-chicken');
                 }
             }
 
@@ -299,7 +295,7 @@ TOTAL AMOUNT: ₱${cartTotal}
 
 Thank you!`.trim();
 
-        const messengerUrl = `https://m.me/oesterscafeandresto?text=${encodeURIComponent(message)}`;
+        const messengerUrl = `https://m.me/3jdressedchicken?text=${encodeURIComponent(message)}`;
         window.open(messengerUrl, '_blank');
 
         // Optionally clear cart
@@ -329,7 +325,7 @@ Thank you!`.trim();
             <header className="app-header">
                 <div className="container header-container">
                     <Link to="/" className="brand">
-                        <img src={storeSettings.logo_url || "/logo.png"} alt="Oesters Logo" style={{ height: '50px' }} />
+                        <img src={storeSettings.logo_url || "/logo.jpg"} alt="3J Logo" style={{ height: '60px' }} />
                     </Link>
 
                     <nav className="header-nav" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -344,12 +340,77 @@ Thank you!`.trim();
                 </div>
             </header>
 
+            {/* Category Slider - Blended with Header */}
+            <div style={{
+                background: '#111827',
+                padding: '12px 0',
+                position: 'sticky',
+                top: '70px',
+                zIndex: 90,
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                overflowX: 'auto',
+                whiteSpace: 'nowrap',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                display: 'block'
+            }} className="category-slider">
+                <style>{`
+                    .category-slider::-webkit-scrollbar { display: none; }
+                    .category-container {
+                        display: inline-flex;
+                        gap: 12px;
+                        padding: 0 20px;
+                        min-width: 100%;
+                        justify-content: center;
+                    }
+                    @media (max-width: 768px) {
+                        .category-container { justify-content: flex-start; }
+                    }
+                `}</style>
+                <div className="category-container">
+                    {categories.map(cat => (
+                        <button key={cat.id} className={activeCategory === cat.id ? 'btn-primary' : ''}
+                            style={{
+                                background: activeCategory === cat.id ? 'var(--gradient-red)' : 'rgba(255, 255, 255, 0.05)',
+                                color: activeCategory === cat.id ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                                border: `1px solid ${activeCategory === cat.id ? 'var(--gold)' : 'rgba(255, 255, 255, 0.2)'}`,
+                                borderRadius: '30px', padding: '8px 24px',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                fontWeight: 700,
+                                flexShrink: 0,
+                                boxShadow: activeCategory === cat.id ? '0 4px 12px rgba(203, 32, 39, 0.3)' : 'none',
+                                cursor: 'pointer'
+                            }}
+                            onClick={() => {
+                                setActiveCategory(cat.id);
+                                document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
+                            }}
+                        >{cat.name}</button>
+                    ))}
+                </div>
+            </div>
+
             {/* Hero Section */}
             <section className="hero-section" style={{ overflow: 'hidden' }}>
                 <div className="container hero-split">
                     <div className="hero-content animate-fade-up">
-                        <h1>Quality in <span style={{ color: 'var(--accent)' }}>every bite</span></h1>
-                        <p>Experience our specialty dishes and coffee. We bring you the best flavors and a welcoming atmosphere.</p>
+                        <h1 style={{ color: 'var(--accent)', fontWeight: 900, fontSize: '4rem', textTransform: 'uppercase', marginBottom: '10px' }}>
+                            Freshly Dressed <span style={{ color: 'var(--primary)' }}>Chicken</span>
+                        </h1>
+                        <p style={{
+                            fontFamily: 'Playfair Display, serif',
+                            fontSize: '1.5rem',
+                            color: 'var(--primary)',
+                            fontWeight: 700,
+                            fontStyle: 'italic',
+                            marginBottom: '30px',
+                            letterSpacing: '1px'
+                        }}>
+                            "Matinlo kag Garantisado"
+                        </p>
+                        <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', marginBottom: '40px' }}>
+                            Experience the best quality, freshness, and the best value for your family.
+                        </p>
                         {/* Explore Menu button removed */}
                     </div>
                     <div className="hero-image-container">
@@ -375,26 +436,7 @@ Thank you!`.trim();
                 </div>
             </section>
 
-
-            <main className="container" id="menu" style={{ padding: '80px 0' }}>
-                <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-                    <h2 style={{ fontSize: '3rem', marginBottom: '10px', color: 'var(--primary)' }}>Our Menu</h2>
-                    <p style={{ color: 'var(--text-muted)' }}>Pick your favorites and add them to your cart.</p>
-                </div>
-
-                {/* Category Tabs */}
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '40px', flexWrap: 'wrap' }}>
-                    {categories.map(cat => (
-                        <button key={cat.id} className={activeCategory === cat.id ? 'btn-primary' : 'btn-accent'}
-                            style={{
-                                background: activeCategory === cat.id ? 'var(--primary)' : 'transparent',
-                                color: activeCategory === cat.id ? 'white' : 'var(--primary)',
-                                border: '1px solid var(--primary)', borderRadius: '20px', padding: '8px 20px'
-                            }}
-                            onClick={() => setActiveCategory(cat.id)}
-                        >{cat.name}</button>
-                    ))}
-                </div>
+            <main className="container" id="menu" style={{ padding: '60px 0' }}>
 
                 <div className="menu-grid">
                     {items.filter(item => item.category_id === activeCategory).map(item => (

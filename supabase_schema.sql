@@ -1,4 +1,4 @@
--- Supabase Schema for Oesters Cafe and Resto
+-- Supabase Schema for 3J Dressed Chicken Store
 -- This script is idempotent (safe to run multiple times)
 
 -- Enable UUID extension
@@ -7,7 +7,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- 1. Store Settings Table
 CREATE TABLE IF NOT EXISTS store_settings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    store_name TEXT NOT NULL DEFAULT 'Oesters Cafe and Resto',
+    store_name TEXT NOT NULL DEFAULT '3J Dressed Chicken Store',
     address TEXT,
     contact TEXT,
     logo_url TEXT,
@@ -75,5 +75,10 @@ CREATE TABLE IF NOT EXISTS orders (
     status TEXT DEFAULT 'Pending'    -- Pending, Preparing, Ready, Completed, Cancelled
 );
 
--- Initial Data (Optional)
--- INSERT INTO store_settings (store_name, contact) VALUES ('Oesters Cafe and Resto', '09563713967');
+-- CLEANUP SECTION (Uncomment to reset all data)
+-- DELETE FROM orders;
+-- DELETE FROM menu_items;
+-- DELETE FROM categories;
+-- DELETE FROM payment_settings;
+-- DELETE FROM store_settings;
+-- DELETE FROM order_types;

@@ -85,15 +85,11 @@ const AdminDashboard = () => {
             manual_status: 'auto', // auto, open, closed
             open_time: '10:00',
             close_time: '01:00',
-            store_name: '',
-            address: 'Poblacion, El Nido, Palawan',
-            contact: '09563713967',
+            store_name: '3J Dressed Chicken Store',
+            address: '',
+            contact: '',
             logo_url: '',
-            banner_images: [
-                'https://images.unsplash.com/photo-1517701604599-bb29b565094d?auto=format&fit=crop&w=1200&q=80',
-                'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=1200&q=80',
-                'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80'
-            ]
+            banner_images: []
         };
     });
 
@@ -1020,6 +1016,21 @@ const AdminDashboard = () => {
             }
         };
 
+        const removeLogo = async () => {
+            if (!storeSettings.id) {
+                setStoreSettings({ ...storeSettings, logo_url: '' });
+                return;
+            }
+            const { error } = await supabase.from('store_settings').update({ logo_url: '' }).eq('id', storeSettings.id);
+            if (error) {
+                console.error(error);
+                showMessage(`Error removing logo: ${error.message}`);
+                return;
+            }
+            setStoreSettings({ ...storeSettings, logo_url: '' });
+            showMessage('Logo removed.');
+        };
+
         return (
             <div className="admin-card" style={{ background: 'white', padding: '30px', borderRadius: '24px' }}>
                 <h2 style={{ marginBottom: '30px' }}>Store Settings</h2>
@@ -1068,7 +1079,33 @@ const AdminDashboard = () => {
                                 <Camera size={20} /> Store Logo
                             </h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                {storeSettings.logo_url && <img src={storeSettings.logo_url} style={{ width: '120px', height: '120px', objectFit: 'contain', border: '1px solid #ddd', borderRadius: '10px' }} />}
+                                {storeSettings.logo_url && (
+                                    <div style={{ position: 'relative', width: '120px' }}>
+                                        <img src={storeSettings.logo_url} style={{ width: '120px', height: '120px', objectFit: 'contain', border: '1px solid #ddd', borderRadius: '10px' }} />
+                                        <button
+                                            type="button"
+                                            onClick={removeLogo}
+                                            style={{
+                                                position: 'absolute',
+                                                top: '-10px',
+                                                right: '-10px',
+                                                background: 'rgba(239, 68, 68, 0.9)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '50%',
+                                                width: '28px',
+                                                height: '28px',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                                            }}
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    </div>
+                                )}
                                 <input type="file" accept="image/*" onChange={handleLogoUpload} style={inputStyle} />
                             </div>
                         </div>
@@ -1147,10 +1184,10 @@ const AdminDashboard = () => {
     return (
         <div className="admin-layout" style={{ display: 'flex', minHeight: '100vh', background: '#f1f5f9', fontFamily: 'Inter' }}>
             {/* Sidebar */}
-            <aside style={{ width: '260px', background: 'var(--primary)', color: 'white', padding: '30px 20px', position: 'fixed', height: '100vh' }}>
+            <aside style={{ width: '260px', background: 'var(--primary)', color: 'white', padding: '30px 20px', position: 'fixed', height: '100vh', boxShadow: '5px 0 15px rgba(0,0,0,0.1)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '50px', paddingLeft: '10px' }}>
                     <Package size={28} color="var(--accent)" />
-                    <span style={{ fontSize: '1.4rem', fontWeight: 700, fontFamily: 'Playfair Display' }}>Oesters</span>
+                    <span style={{ fontSize: '1.4rem', fontWeight: 700, fontFamily: 'Playfair Display' }}>3J Dressed Chicken</span>
                 </div>
 
                 <nav style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>

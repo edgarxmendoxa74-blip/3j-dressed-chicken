@@ -5,12 +5,12 @@ import { supabase } from '../supabaseClient';
 
 const Contact = () => {
     const [storeSettings, setStoreSettings] = useState({
-        store_name: 'Oesters',
-        address: 'Philippines',
-        contact: '09563713967',
+        store_name: '3J Dressed Chicken Store',
+        address: '',
+        contact: '',
         open_time: '10:00',
         close_time: '01:00',
-        logo_url: '/logo.png'
+        logo_url: ''
     });
 
     useEffect(() => {
@@ -35,7 +35,7 @@ const Contact = () => {
             <header className="app-header">
                 <div className="container header-container">
                     <Link to="/" className="brand">
-                        <img src={storeSettings.logo_url || "/logo.png"} alt="Oesters Logo" style={{ height: '50px' }} />
+                        <img src={storeSettings.logo_url || "/logo.jpg"} alt="3J Logo" style={{ height: '60px' }} />
 
                     </Link>
                     <nav className="header-nav" style={{ display: 'flex', gap: '20px' }}>
@@ -85,15 +85,25 @@ const Contact = () => {
                 </div>
 
                 {/* Social Media Section */}
-                <div style={{ background: 'var(--primary)', color: 'white', borderRadius: '30px', padding: '60px', textAlign: 'center' }}>
-                    <h2 style={{ fontSize: '2rem', marginBottom: '20px' }}>Stay Connected</h2>
+                <div style={{ background: 'var(--gradient-red)', color: 'white', borderRadius: '40px', padding: '60px', textAlign: 'center', boxShadow: 'var(--shadow-lg)', border: '2px solid var(--gold)' }}>
+                    <h2 style={{ fontSize: '2.5rem', marginBottom: '20px', fontWeight: 900 }}>STAY CONNECTED</h2>
+                    <p style={{
+                        fontFamily: 'Playfair Display, serif',
+                        fontSize: '1.4rem',
+                        color: 'var(--gold)',
+                        fontWeight: 700,
+                        fontStyle: 'italic',
+                        marginBottom: '30px'
+                    }}>
+                        Matinlo kag Garantisado
+                    </p>
                     <p style={{ marginBottom: '40px', color: 'rgba(255,255,255,0.8)' }}>Follow us on social media for daily specials and events.</p>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
-                        <a href="https://www.facebook.com/oesterscafeandresto" target="_blank" rel="noopener noreferrer" style={{ background: 'white', color: 'var(--primary)', padding: '15px 30px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <a href="https://www.facebook.com/3jdressedchicken" target="_blank" rel="noopener noreferrer" style={{ background: 'white', color: 'var(--primary)', padding: '15px 30px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <Facebook size={20} />
                             Facebook
                         </a>
-                        <a href="mailto:contact@oesters.com" style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', padding: '15px 30px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <a href="mailto:contact@3jdressedchicken.com" style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', padding: '15px 30px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <Mail size={20} />
                             Email Us
                         </a>

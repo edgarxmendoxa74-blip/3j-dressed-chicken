@@ -15,7 +15,7 @@ const Login = () => {
         setError('');
 
         // Developer Bypass: Allow login with admin/admin if Supabase users aren't setup yet
-        if (email === 'admin@oesters.com' && password === 'admin') {
+        if (email === 'admin@3jdressedchicken.com' && password === 'admin') {
             console.log('Developer bypass used');
             localStorage.setItem('admin_bypass', 'true');
             // Refresh page to trigger context update or navigate directly
@@ -40,12 +40,12 @@ const Login = () => {
             {/* Left Side - Brand/Hero */}
             <div style={{ position: 'relative', background: 'var(--primary)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ position: 'absolute', inset: 0, opacity: 0.3, background: 'url("/hero.jpg") no-repeat center center/cover', mixBlendMode: 'overlay' }}></div>
-                <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', color: 'white', padding: '40px' }}>
+                <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', color: 'var(--accent)', padding: '40px' }}>
                     <div style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', padding: '20px', borderRadius: '30px', display: 'inline-block', marginBottom: '30px', border: '1px solid rgba(255,255,255,0.2)' }}>
-                        <img src="/logo.png" alt="Oesters" style={{ height: '80px', display: 'block' }} />
+                        <img src="/logo.jpg" alt="3J Dressed Chicken Store" style={{ height: '100px', display: 'block' }} />
                     </div>
-                    <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '3.5rem', marginBottom: '10px' }}>Oesters</h1>
-                    <p style={{ fontSize: '1.2rem', letterSpacing: '2px', textTransform: 'uppercase', opacity: 0.9 }}>Cafe & Resto</p>
+                    <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '3rem', marginBottom: '10px' }}>3J Dressed Chicken Store</h1>
+                    <p style={{ fontSize: '1.2rem', letterSpacing: '2px', textTransform: 'uppercase', opacity: 0.9 }}>Matinlo kag Garantisado</p>
                 </div>
             </div>
 
@@ -78,7 +78,7 @@ const Login = () => {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="admin@oesters.com"
+                                    placeholder="admin@3jdressedchicken.com"
                                     style={{ width: '100%', padding: '15px 15px 15px 45px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none', transition: 'all 0.3s' }}
                                 />
                             </div>
@@ -115,9 +115,9 @@ const Login = () => {
                         <button
                             type="submit"
                             style={{
-                                width: '100%', padding: '15px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '12px',
+                                width: '100%', padding: '15px', background: 'var(--primary)', color: 'var(--accent)', border: 'none', borderRadius: '12px',
                                 fontSize: '1rem', fontWeight: 700, cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px',
-                                boxShadow: '0 4px 15px rgba(166, 61, 64, 0.3)', transition: 'transform 0.2s'
+                                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)', transition: 'transform 0.2s'
                             }}
                         >
                             <LogIn size={20} />

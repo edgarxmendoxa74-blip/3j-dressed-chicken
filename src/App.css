@@ -1,20 +1,22 @@
 /* Global Styles */
 
 :root {
-  --primary: #D9232D;
-  --primary-dark: #B01C24;
-  --primary-light: #E85A60;
-  --accent: #FFB400;
-  --bg: #FDF8F5;
+  --primary: #CB2027;
+  --primary-dark: #9B181E;
+  --primary-light: #EF4444;
+  --gold: #F8CC1D;
+  --accent: #111827;
+  --bg: #FFFAF0;
   --card-bg: #ffffff;
-  --text: #2C1810;
-  --text-muted: #6B5D57;
+  --text: #1F2937;
+  --text-muted: #6B7280;
   --error: #ef4444;
   --success: #10b981;
-  --border: rgba(166, 61, 64, 0.1);
-  --radius: 16px;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --border: rgba(203, 32, 39, 0.1);
+  --radius: 24px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(203, 32, 39, 0.2);
+  --gradient-red: linear-gradient(135deg, #CB2027 0%, #9B181E 100%);
 }
 
 body {
@@ -33,14 +35,16 @@ body {
 
 /* Layout Parts */
 .app-header {
-  padding: 20px 0;
-  background: rgba(255, 255, 255, 0.8);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
+  padding: 15px 0;
+  background: #111827;
+  /* Rich Black */
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .header-container {
@@ -65,7 +69,7 @@ body {
   font-family: 'Playfair Display', serif;
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--primary);
+  color: #FFFFFF;
   line-height: 1;
 }
 
@@ -73,7 +77,7 @@ body {
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.2rem;
-  color: var(--accent);
+  color: #FFFFFF;
   font-weight: 600;
 }
 
@@ -84,23 +88,34 @@ body {
 
 .nav-link {
   text-decoration: none;
-  color: var(--text);
+  color: #FFFFFF;
   font-weight: 600;
   font-size: 0.95rem;
   transition: color 0.3s;
 }
 
 .nav-link:hover {
-  color: var(--accent);
+  color: var(--gold);
 }
 
 /* Hero Section */
 .hero-section {
-  padding: 80px 0;
-  background: var(--primary);
-  color: #fff;
+  padding: 100px 0;
+  background: white;
   position: relative;
   overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(248, 204, 29, 0.15) 0%, rgba(203, 32, 39, 0.05) 50%, white 100%);
+  z-index: 0;
 }
 
 .hero-split {
@@ -119,12 +134,12 @@ body {
   font-size: 3.5rem;
   line-height: 1.1;
   margin-bottom: 24px;
-  color: #fff;
+  color: var(--accent);
 }
 
 .hero-content p {
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(0, 0, 0, 0.8);
   margin-bottom: 40px;
   max-width: 500px;
 }
@@ -204,19 +219,23 @@ body {
 
 /* Button Styles */
 .btn-primary {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 30px;
-  font-weight: 600;
+  background: var(--gradient-red);
+  color: #FFFFFF;
+  border: 2px solid var(--gold);
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 12px -2px rgba(203, 32, 39, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .btn-primary:hover {
-  background: var(--primary-light);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 15px -3px rgba(185, 28, 28, 0.3);
+  filter: brightness(1.1);
 }
 
 .btn-accent {
@@ -240,21 +259,25 @@ body {
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--primary);
-  color: #fff;
-  padding: 12px 24px;
+  background: var(--gold);
+  color: #000000;
+  padding: 14px 28px;
   border-radius: 50px;
+  font-weight: 800;
   display: flex;
   align-items: center;
   gap: 20px;
-  box-shadow: 0 10px 25px rgba(166, 61, 64, 0.3);
+  box-shadow: 0 10px 25px rgba(248, 204, 29, 0.4);
   z-index: 1000;
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid #000000;
 }
 
 .sticky-cart:hover {
-  transform: translateX(-50%) scale(1.05);
+  transform: translateX(-50%) translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 30px rgba(248, 204, 29, 0.6);
+  filter: brightness(1.1);
 }
 
 /* Animations */
