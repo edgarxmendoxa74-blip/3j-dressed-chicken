@@ -258,7 +258,7 @@ const Home = () => {
         if (orderType === 'pickup') customerInfoStr += `\nPhone: ${customerDetails.phone}\nPickup Time: ${customerDetails.pickup_time}`;
         if (orderType === 'delivery') customerInfoStr += `\nPhone: ${customerDetails.phone}\nAddress: ${customerDetails.address}\nLandmark: ${customerDetails.landmark}`;
 
-        const orderDetailsText = `ORDER SUMMARY\n${'='.repeat(40)}\n\nOrder Type: ${orderType.toUpperCase()}\nPayment Method: ${paymentMethod}\n\nCustomer Details:\n${customerInfoStr}\n\nItem Details:\n${itemDetails.map((item, i) => `${i + 1}. ${item}`).join('\n')}\n\n${'='.repeat(40)}\nTOTAL AMOUNT: ₱${cartTotal}\n${'='.repeat(40)}`;
+        const orderDetailsText = `ORDER SUMMARY\n${'='.repeat(40)}\n\nOrder Type: ${orderType.toUpperCase()}\nPayment Method: ${paymentMethod}\n\nCustomer Details:\n${customerInfoStr}\n\nItem Details:\n${itemDetails.map((item, i) => `${i + 1}. ${item}`).join('\n')}\n\n${'='.repeat(40)}\nTOTAL AMOUNT: ${cartTotal}\n${'='.repeat(40)}`;
 
         try {
             await navigator.clipboard.writeText(orderDetailsText);
@@ -336,7 +336,7 @@ ${customerInfoStr}
 Item Details:
 ${orderDetailsStr}
 
-TOTAL AMOUNT: ₱${cartTotal}
+TOTAL AMOUNT: ${cartTotal}
 
 Thank you!`.trim();
 

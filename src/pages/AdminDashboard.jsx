@@ -880,7 +880,7 @@ const AdminDashboard = () => {
             fullText += (order.items || []).map((item, i) => `${i + 1}. ${item}`).join('\n');
 
             fullText += `\n\n${'='.repeat(40)}\n`;
-            fullText += `TOTAL AMOUNT: ₱${order.total_amount}\n`;
+            fullText += `TOTAL AMOUNT: ${order.total_amount}\n`;
             fullText += `${'='.repeat(40)}`;
 
             copyToClipboard(fullText, 'Full order copied!');
