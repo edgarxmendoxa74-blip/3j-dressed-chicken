@@ -317,31 +317,8 @@ const Home = () => {
             // Ignore error so ordering proceeds
         }
 
-        // --- PREPARE MESSENGER MSG ---
-        const orderDetailsStr = itemDetails.join('\n');
-        let customerInfoStr = `Name: ${customerDetails.name}`;
-        if (orderType === 'dine-in') customerInfoStr += `\nTable Number: ${customerDetails.table_number}`;
-        if (orderType === 'pickup') customerInfoStr += `\nPhone: ${customerDetails.phone}\nPickup Time: ${customerDetails.pickup_time}`;
-        if (orderType === 'delivery') customerInfoStr += `\nPhone: ${customerDetails.phone}\nAddress: ${customerDetails.address}\nLandmark: ${customerDetails.landmark}`;
-
-        const message = `
-Hello! I'd like to place an order:
-
-Order Type: ${orderType.toUpperCase()}
-Payment Method: ${paymentMethod}
-
-Customer Details:
-${customerInfoStr}
-
-Item Details:
-${orderDetailsStr}
-
-TOTAL AMOUNT: ${cartTotal}
-
-Thank you!`.trim();
-
+        // --- MESSENGER REDIRECTION (NO TEXT PAYLOAD) ---
         const pageId = '61587544585902';
-        const encodedMessage = encodeURIComponent(message);
 
         // Detect mobile device
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -351,74 +328,40 @@ Thank you!`.trim();
         // Close checkout modal first
         setIsCheckoutOpen(false);
 
-        if (isMobile) {
-            // For mobile devices, try multiple approaches
-            if (isIOS) {
-                // iOS: Use fb-messenger scheme first, then fallback
-                const messengerAppUrl = `fb-messenger://user-thread/${pageId}`;
-                const webFallback = `https://www.messenger.com/t/${pageId}`;
+        // Show instruction to paste
+        alert('✓ Order saved!\n\nOpening Messenger...\n\nPlease PASTE (Ctrl+V or long-press) your order details in the message box.');
 
-                // Try to open Messenger app
-                const startTime = Date.now();
+        if (isMobile) {
+            // Mobile: Use deep links to open Messenger app
+            if (isIOS) {
+                // iOS: Try fb-messenger scheme
+                const messengerAppUrl = `fb-messenger://user-thread/${pageId}`;
                 window.location.href = messengerAppUrl;
 
-                // If app doesn't open within 1.5 seconds, redirect to web version
-                setTimeout(() => {
-                    if (Date.now() - startTime < 2000) {
-                        // App likely opened, do nothing
-                    }
-                    // User can manually copy the message if needed
-                }, 1500);
-
-                // Also try opening in new window as backup
+                // Fallback to web version if app doesn't open
                 setTimeout(() => {
                     if (document.visibilityState !== 'hidden') {
-                        // Still on page, app didn't open - try web version
-                        window.open(webFallback, '_blank');
+                        window.open(`https://www.messenger.com/t/${pageId}`, '_blank');
                     }
                 }, 2000);
             } else if (isAndroid) {
-                // Android: Use intent URL for better app detection
+                // Android: Use intent URL
                 const intentUrl = `intent://user/${pageId}#Intent;scheme=fb-messenger;package=com.facebook.orca;end`;
-                const webFallback = `https://www.messenger.com/t/${pageId}`;
-
-                // Try intent first
                 window.location.href = intentUrl;
 
-                // Fallback to web after delay
+                // Fallback to web version
                 setTimeout(() => {
                     if (document.visibilityState !== 'hidden') {
-                        window.open(webFallback, '_blank');
+                        window.open(`https://www.messenger.com/t/${pageId}`, '_blank');
                     }
                 }, 1500);
             } else {
-                // Other mobile: Use m.me with web fallback
-                const mmeUrl = `https://m.me/${pageId}`;
-                window.location.href = mmeUrl;
+                // Other mobile: Use m.me
+                window.location.href = `https://m.me/${pageId}`;
             }
-
-            // Show a helpful alert with the message for mobile users to copy
-            setTimeout(() => {
-                if (document.visibilityState !== 'hidden') {
-                    // Still on page - show copy option
-                    const copyMessage = confirm(
-                        'If Messenger did not open automatically, click OK to copy your order message. You can then paste it in Messenger manually.'
-                    );
-                    if (copyMessage) {
-                        navigator.clipboard.writeText(message).then(() => {
-                            alert('Order message copied! Open Messenger and paste it to send your order.');
-                            window.open(`https://www.messenger.com/t/${pageId}`, '_blank');
-                        }).catch(() => {
-                            // Clipboard failed, show text for manual copy
-                            prompt('Copy this message and send it via Messenger:', message);
-                        });
-                    }
-                }
-            }, 3000);
         } else {
-            // Desktop: Use m.me URL which works well
-            const messengerUrl = `https://m.me/${pageId}?text=${encodedMessage}`;
-            window.open(messengerUrl, '_blank');
+            // Desktop: Open Messenger web (WITHOUT text parameter to avoid errors)
+            window.open(`https://m.me/${pageId}`, '_blank');
         }
     };
 
