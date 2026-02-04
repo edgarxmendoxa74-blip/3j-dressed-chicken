@@ -295,7 +295,7 @@ TOTAL AMOUNT: ₱${cartTotal}
 
 Thank you!`.trim();
 
-        const messengerUrl = `https://m.me/3jdressedchicken?text=${encodeURIComponent(message)}`;
+        const messengerUrl = `https://m.me/61587544585902?text=${encodeURIComponent(message)}`;
         window.open(messengerUrl, '_blank');
 
         // Optionally clear cart
@@ -464,7 +464,7 @@ Thank you!`.trim();
                                         className="btn-primary"
                                         disabled={item.out_of_stock || !isOpen}
                                         onClick={() => openProductSelection(item)}
-                                        style={{ padding: '8px 16px', fontSize: '0.8rem', opacity: (item.out_of_stock || !isOpen) ? 0.5 : 1 }}
+                                        style={{ padding: '6px 14px', fontSize: '0.75rem', opacity: (item.out_of_stock || !isOpen) ? 0.5 : 1 }}
                                     >
                                         <Plus size={14} style={{ marginRight: '5px' }} /> Add to Cart
                                     </button>

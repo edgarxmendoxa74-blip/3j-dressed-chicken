@@ -239,8 +239,8 @@ body {
 }
 
 .btn-accent {
-  background: var(--accent);
-  color: var(--primary-dark);
+  background: var(--gold);
+  color: var(--accent);
   border: none;
   padding: 10px 20px;
   border-radius: 30px;

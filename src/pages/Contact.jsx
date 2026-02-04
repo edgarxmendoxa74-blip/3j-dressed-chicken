@@ -99,7 +99,7 @@ const Contact = () => {
                     </p>
                     <p style={{ marginBottom: '40px', color: 'rgba(255,255,255,0.8)' }}>Follow us on social media for daily specials and events.</p>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
-                        <a href="https://www.facebook.com/3jdressedchicken" target="_blank" rel="noopener noreferrer" style={{ background: 'white', color: 'var(--primary)', padding: '15px 30px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <a href="https://www.facebook.com/61587544585902" target="_blank" rel="noopener noreferrer" style={{ background: 'white', color: 'var(--primary)', padding: '15px 30px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <Facebook size={20} />
                             Facebook
                         </a>
