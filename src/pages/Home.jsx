@@ -178,6 +178,7 @@ const Home = () => {
     // Order type and payment state
     const [orderType, setOrderType] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('');
+    const [orderCopied, setOrderCopied] = useState(false);
     const [customerDetails, setCustomerDetails] = useState({
         name: '',
         phone: '',
@@ -242,6 +243,32 @@ const Home = () => {
 
     const cartTotal = cart.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+    const copyOrderDetails = async () => {
+        const itemDetails = cart.map(item => {
+            let d = `${item.name} (x${item.quantity})`;
+            if (item.selectedVariation) d += ` - ${item.selectedVariation.name}`;
+            if (item.selectedFlavors && item.selectedFlavors.length > 0) d += ` [${item.selectedFlavors.join(', ')}]`;
+            if (item.selectedAddons.length > 0) d += ` + ${item.selectedAddons.map(a => a.name).join(', ')}`;
+            return d;
+        });
+
+        let customerInfoStr = `Name: ${customerDetails.name}`;
+        if (orderType === 'dine-in') customerInfoStr += `\nTable Number: ${customerDetails.table_number}`;
+        if (orderType === 'pickup') customerInfoStr += `\nPhone: ${customerDetails.phone}\nPickup Time: ${customerDetails.pickup_time}`;
+        if (orderType === 'delivery') customerInfoStr += `\nPhone: ${customerDetails.phone}\nAddress: ${customerDetails.address}\nLandmark: ${customerDetails.landmark}`;
+
+        const orderDetailsText = `ORDER SUMMARY\n${'='.repeat(40)}\n\nOrder Type: ${orderType.toUpperCase()}\nPayment Method: ${paymentMethod}\n\nCustomer Details:\n${customerInfoStr}\n\nItem Details:\n${itemDetails.map((item, i) => `${i + 1}. ${item}`).join('\n')}\n\n${'='.repeat(40)}\nTOTAL AMOUNT: ₱${cartTotal}\n${'='.repeat(40)}`;
+
+        try {
+            await navigator.clipboard.writeText(orderDetailsText);
+            setOrderCopied(true);
+            alert('✓ Order details copied to clipboard!');
+        } catch (err) {
+            console.error('Failed to copy:', err);
+            alert('Failed to copy. Please try again.');
+        }
+    };
 
     const handlePlaceOrder = () => {
         if (!orderType) {
@@ -808,7 +835,59 @@ Thank you!`.trim();
                                 <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)' }}>₱{cartTotal}</span>
                             </div>
 
-                            <button className="btn-accent" onClick={handlePlaceOrder} style={{ width: '100%', padding: '18px', borderRadius: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontWeight: 800, fontSize: '1.1rem' }}>
+                            {/* Copy Order Button - Required before proceeding */}
+                            <button
+                                className="btn-primary"
+                                onClick={copyOrderDetails}
+                                style={{
+                                    width: '100%',
+                                    padding: '15px',
+                                    borderRadius: '15px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '10px',
+                                    fontWeight: 700,
+                                    fontSize: '1rem',
+                                    marginBottom: '15px',
+                                    background: orderCopied ? '#059669' : '#7c3aed',
+                                    border: 'none',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <Copy size={20} /> {orderCopied ? '✓ Order Copied!' : 'Copy Order Details'}
+                            </button>
+
+                            {!orderCopied && (
+                                <p style={{
+                                    textAlign: 'center',
+                                    fontSize: '0.85rem',
+                                    color: '#dc2626',
+                                    marginBottom: '15px',
+                                    fontWeight: 600
+                                }}>
+                                    ⚠ Please copy your order details first
+                                </p>
+                            )}
+
+                            <button
+                                className="btn-accent"
+                                onClick={handlePlaceOrder}
+                                disabled={!orderCopied}
+                                style={{
+                                    width: '100%',
+                                    padding: '18px',
+                                    borderRadius: '15px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '10px',
+                                    fontWeight: 800,
+                                    fontSize: '1.1rem',
+                                    opacity: orderCopied ? 1 : 0.5,
+                                    cursor: orderCopied ? 'pointer' : 'not-allowed'
+                                }}
+                            >
                                 <MessageSquare size={22} /> Confirm Order
                             </button>
                         </div>
@@ -841,7 +920,7 @@ Thank you!`.trim();
                             </div>
                         ))}
                     </div>
-                    <button className="btn-primary" onClick={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }} style={{ width: '100%', padding: '15px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontWeight: 800 }}>Proceed to Checkout</button>
+                    <button className="btn-primary" onClick={() => { setIsCartOpen(false); setIsCheckoutOpen(true); setOrderCopied(false); }} style={{ width: '100%', padding: '15px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontWeight: 800 }}>Proceed to Checkout</button>
                 </div>
             )}
         </div>
