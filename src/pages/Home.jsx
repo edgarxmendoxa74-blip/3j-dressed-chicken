@@ -317,8 +317,31 @@ const Home = () => {
             // Ignore error so ordering proceeds
         }
 
-        // --- MESSENGER REDIRECTION (NO TEXT PAYLOAD) ---
+        // --- PREPARE MESSENGER MSG ---
+        const orderDetailsStr = itemDetails.join('\n');
+        let customerInfoStr = `Name: ${customerDetails.name}`;
+        if (orderType === 'dine-in') customerInfoStr += `\nTable Number: ${customerDetails.table_number}`;
+        if (orderType === 'pickup') customerInfoStr += `\nPhone: ${customerDetails.phone}\nPickup Time: ${customerDetails.pickup_time}`;
+        if (orderType === 'delivery') customerInfoStr += `\nPhone: ${customerDetails.phone}\nAddress: ${customerDetails.address}\nLandmark: ${customerDetails.landmark}`;
+
+        const message = `
+Hello! I'd like to place an order:
+
+Order Type: ${orderType.toUpperCase()}
+Payment Method: ${paymentMethod}
+
+Customer Details:
+${customerInfoStr}
+
+Item Details:
+${orderDetailsStr}
+
+TOTAL AMOUNT: ${cartTotal}
+
+Thank you!`.trim();
+
         const pageId = '61587544585902';
+        const encodedMessage = encodeURIComponent(message);
 
         // Detect mobile device
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -328,9 +351,6 @@ const Home = () => {
         // Close checkout modal first
         setIsCheckoutOpen(false);
 
-        // Show instruction to paste
-        alert('✓ Order saved!\n\nOpening Messenger...\n\nPlease PASTE (Ctrl+V or long-press) your order details in the message box.');
-
         if (isMobile) {
             // Mobile: Use deep links to open Messenger app
             if (isIOS) {
@@ -338,10 +358,10 @@ const Home = () => {
                 const messengerAppUrl = `fb-messenger://user-thread/${pageId}`;
                 window.location.href = messengerAppUrl;
 
-                // Fallback to web version if app doesn't open
+                // Fallback to web version WITH text if app doesn't open
                 setTimeout(() => {
                     if (document.visibilityState !== 'hidden') {
-                        window.open(`https://www.messenger.com/t/${pageId}`, '_blank');
+                        window.open(`https://www.messenger.com/t/${pageId}/?text=${encodedMessage}`, '_blank');
                     }
                 }, 2000);
             } else if (isAndroid) {
@@ -349,19 +369,20 @@ const Home = () => {
                 const intentUrl = `intent://user/${pageId}#Intent;scheme=fb-messenger;package=com.facebook.orca;end`;
                 window.location.href = intentUrl;
 
-                // Fallback to web version
+                // Fallback to web version WITH text
                 setTimeout(() => {
                     if (document.visibilityState !== 'hidden') {
-                        window.open(`https://www.messenger.com/t/${pageId}`, '_blank');
+                        window.open(`https://www.messenger.com/t/${pageId}/?text=${encodedMessage}`, '_blank');
                     }
                 }, 1500);
             } else {
-                // Other mobile: Use m.me
-                window.location.href = `https://m.me/${pageId}`;
+                // Other mobile: Use m.me WITH text fallback
+                window.location.href = `https://m.me/${pageId}?text=${encodedMessage}`;
             }
         } else {
-            // Desktop: Open Messenger web (WITHOUT text parameter to avoid errors)
-            window.open(`https://m.me/${pageId}`, '_blank');
+            // Desktop: Use m.me URL which works well with text
+            const messengerUrl = `https://m.me/${pageId}?text=${encodedMessage}`;
+            window.open(messengerUrl, '_blank');
         }
     };
 
