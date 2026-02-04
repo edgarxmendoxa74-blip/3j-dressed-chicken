@@ -42,13 +42,18 @@ const Home = () => {
         open_time: '10:00',
         close_time: '01:00',
         store_name: '3J Dressed Chicken Store',
-        address: '',
-        contact: '',
-        logo_url: '',
-        banner_images: []
+        address: 'Magdalena, Laguna',
+        contact: '09123456789',
+        logo_url: '/logo.jpg',
+        banner_images: [
+            '/hero-bg.jpg',
+            'https://images.unsplash.com/photo-1576618148400-f54bed99fcf8?auto=format&fit=crop&q=80',
+            'https://images.unsplash.com/photo-1544025162-d76690b60943?auto=format&fit=crop&q=80'
+        ]
     });
 
     const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Store status logic
     const isStoreOpen = () => {
@@ -76,60 +81,68 @@ const Home = () => {
     // Load data from Supabase (with LocalStorage fallback)
     useEffect(() => {
         const fetchData = async () => {
-            // 1. Fetch Categories
-            const { data: catData } = await supabase.from('categories').select('*').order('sort_order', { ascending: true });
-            if (catData && catData.length > 0) {
-                setCategories(catData);
-                setActiveCategory(catData[0].id);
-            } else {
-                const savedCats = localStorage.getItem('categories');
-                if (savedCats) {
-                    const parsed = JSON.parse(savedCats);
-                    setCategories(parsed);
-                    if (parsed.length > 0) setActiveCategory(parsed[0].id);
+            setIsLoading(true);
+            try {
+                // 1. Fetch Categories
+                const { data: catData } = await supabase.from('categories').select('*').order('sort_order', { ascending: true });
+                if (catData && catData.length > 0) {
+                    setCategories(catData);
+                    setActiveCategory(catData[0].id);
                 } else {
-                    setCategories([{ id: 'fresh-chicken', name: 'Fresh Chicken' }, { id: 'frozen-goods', name: 'Frozen Goods' }, { id: 'marinated', name: 'Marinated Items' }]);
-                    setActiveCategory('fresh-chicken');
+                    const savedCats = localStorage.getItem('categories');
+                    if (savedCats) {
+                        const parsed = JSON.parse(savedCats);
+                        setCategories(parsed);
+                        if (parsed.length > 0) setActiveCategory(parsed[0].id);
+                    } else {
+                        setCategories([{ id: 'fresh-chicken', name: 'Fresh Chicken' }, { id: 'frozen-goods', name: 'Frozen Goods' }, { id: 'marinated', name: 'Marinated Items' }]);
+                        setActiveCategory('fresh-chicken');
+                    }
                 }
-            }
 
-            // 2. Fetch Menu Items
-            const { data: itemData } = await supabase.from('menu_items').select('*').order('sort_order', { ascending: true });
-            if (itemData && itemData.length > 0) {
-                setItems(itemData);
-            } else {
-                const savedItems = localStorage.getItem('menuItems');
-                setItems(savedItems ? JSON.parse(savedItems) : menuItems);
-            }
-
-            // 3. Fetch Payment Settings
-            const { data: payData } = await supabase.from('payment_settings').select('*').eq('is_active', true);
-            if (payData && payData.length > 0) {
-                setPaymentSettings(payData);
-            } else {
-                const savedPayments = localStorage.getItem('paymentSettings');
-                if (savedPayments) {
-                    const parsed = JSON.parse(savedPayments);
-                    setPaymentSettings(Array.isArray(parsed) ? parsed : []);
+                // 2. Fetch Menu Items
+                const { data: itemData } = await supabase.from('menu_items').select('*').order('sort_order', { ascending: true });
+                if (itemData && itemData.length > 0) {
+                    setItems(itemData);
+                } else {
+                    const savedItems = localStorage.getItem('menuItems');
+                    setItems(savedItems ? JSON.parse(savedItems) : menuItems);
                 }
-            }
 
-            // 4. Fetch Order Types
-            const { data: typeData } = await supabase.from('order_types').select('*').eq('is_active', true);
-            if (typeData && typeData.length > 0) {
-                setOrderTypes(typeData);
-            } else {
-                const savedOrderTypes = localStorage.getItem('orderTypes');
-                if (savedOrderTypes) setOrderTypes(JSON.parse(savedOrderTypes));
-            }
+                // 3. Fetch Payment Settings
+                const { data: payData } = await supabase.from('payment_settings').select('*').eq('is_active', true);
+                if (payData && payData.length > 0) {
+                    setPaymentSettings(payData);
+                } else {
+                    const savedPayments = localStorage.getItem('paymentSettings');
+                    if (savedPayments) {
+                        const parsed = JSON.parse(savedPayments);
+                        setPaymentSettings(Array.isArray(parsed) ? parsed : []);
+                    }
+                }
 
-            // 5. Fetch Store Settings
-            const { data: storeData } = await supabase.from('store_settings').select('*').limit(1).single();
-            if (storeData) {
-                setStoreSettings(storeData);
-            } else {
-                const savedStore = localStorage.getItem('storeSettings');
-                if (savedStore) setStoreSettings(JSON.parse(savedStore));
+                // 4. Fetch Order Types
+                const { data: typeData } = await supabase.from('order_types').select('*').eq('is_active', true);
+                if (typeData && typeData.length > 0) {
+                    setOrderTypes(typeData);
+                } else {
+                    const savedOrderTypes = localStorage.getItem('orderTypes');
+                    if (savedOrderTypes) {
+                        const parsed = JSON.parse(savedOrderTypes);
+                        if (parsed.length > 0) setOrderTypes(parsed);
+                    }
+                }
+
+                // 5. Fetch Store Settings
+                const { data: storeData } = await supabase.from('store_settings').select('*').limit(1).single();
+                if (storeData) {
+                    setStoreSettings(storeData);
+                } else {
+                    const savedStore = localStorage.getItem('storeSettings');
+                    if (savedStore) setStoreSettings(JSON.parse(savedStore));
+                }
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -295,7 +308,7 @@ TOTAL AMOUNT: ₱${cartTotal}
 
 Thank you!`.trim();
 
-        const messengerUrl = `https://m.me/61587544585902?text=${encodeURIComponent(message)}`;
+        const messengerUrl = `https://m.me/61579032505526?text=${encodeURIComponent(message)}`;
         window.open(messengerUrl, '_blank');
 
         // Optionally clear cart
@@ -342,7 +355,7 @@ Thank you!`.trim();
 
             {/* Category Slider - Blended with Header */}
             <div style={{
-                background: '#111827',
+                background: '#000000',
                 padding: '12px 0',
                 position: 'sticky',
                 top: '70px',
@@ -439,39 +452,56 @@ Thank you!`.trim();
             <main className="container" id="menu" style={{ padding: '60px 0' }}>
 
                 <div className="menu-grid">
-                    {items.filter(item => item.category_id === activeCategory).map(item => (
-                        <div className="menu-item-card" key={item.id} style={{ opacity: item.out_of_stock ? 0.6 : 1 }}>
-                            <div style={{ position: 'relative' }}>
-                                <img src={item.image} alt={item.name} className="menu-item-image" />
-                                {item.promo_price && <span style={{ position: 'absolute', top: '10px', left: '10px', background: '#ef4444', color: 'white', padding: '4px 10px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: 800 }}>PROMO</span>}
-                                {item.out_of_stock && <span style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, borderRadius: '20px' }}>OUT OF STOCK</span>}
-                            </div>
-                            <div className="menu-item-info">
-                                <h3 className="menu-item-name">{item.name}</h3>
-                                <p className="menu-item-desc">{item.description}</p>
-                                <div className="menu-item-footer">
-                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                        {item.promo_price ? (
-                                            <>
-                                                <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '0.8rem' }}>₱{item.price}</span>
-                                                <span className="menu-item-price" style={{ color: '#ef4444' }}>₱{item.promo_price}</span>
-                                            </>
-                                        ) : (
-                                            <span className="menu-item-price">₱{item.price}</span>
-                                        )}
+                    {isLoading ? (
+                        // Skeleton Loading UI
+                        Array(8).fill(0).map((_, i) => (
+                            <div key={i} className="menu-item-card animate-pulse" style={{ height: '350px', border: '1px solid #e5e7eb' }}>
+                                <div style={{ height: '200px', background: '#e5e7eb', width: '100%' }}></div>
+                                <div style={{ padding: '15px' }}>
+                                    <div style={{ height: '20px', background: '#e5e7eb', marginBottom: '10px', borderRadius: '4px', width: '80%' }}></div>
+                                    <div style={{ height: '16px', background: '#e5e7eb', marginBottom: '20px', borderRadius: '4px', width: '100%' }}></div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                                        <div style={{ height: '24px', background: '#e5e7eb', width: '30%', borderRadius: '4px' }}></div>
+                                        <div style={{ height: '32px', background: '#e5e7eb', width: '40%', borderRadius: '20px' }}></div>
                                     </div>
-                                    <button
-                                        className="btn-primary"
-                                        disabled={item.out_of_stock || !isOpen}
-                                        onClick={() => openProductSelection(item)}
-                                        style={{ padding: '6px 14px', fontSize: '0.75rem', opacity: (item.out_of_stock || !isOpen) ? 0.5 : 1 }}
-                                    >
-                                        <Plus size={14} style={{ marginRight: '5px' }} /> Add to Cart
-                                    </button>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    ) : (
+                        items.filter(item => item.category_id === activeCategory).map(item => (
+                            <div className="menu-item-card" key={item.id} style={{ opacity: item.out_of_stock ? 0.6 : 1 }}>
+                                <div style={{ position: 'relative' }}>
+                                    <img src={item.image} alt={item.name} className="menu-item-image" />
+                                    {item.promo_price && <span style={{ position: 'absolute', top: '10px', left: '10px', background: '#ef4444', color: 'white', padding: '4px 10px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: 800 }}>PROMO</span>}
+                                    {item.out_of_stock && <span style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, borderRadius: '20px' }}>OUT OF STOCK</span>}
+                                </div>
+                                <div className="menu-item-info">
+                                    <h3 className="menu-item-name">{item.name}</h3>
+                                    <p className="menu-item-desc">{item.description}</p>
+                                    <div className="menu-item-footer">
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                            {item.promo_price ? (
+                                                <>
+                                                    <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '0.8rem' }}>₱{item.price}</span>
+                                                    <span className="menu-item-price" style={{ color: '#ef4444' }}>₱{item.promo_price}</span>
+                                                </>
+                                            ) : (
+                                                <span className="menu-item-price">₱{item.price}</span>
+                                            )}
+                                        </div>
+                                        <button
+                                            className="btn-primary btn-sm"
+                                            disabled={item.out_of_stock || !isOpen}
+                                            onClick={() => openProductSelection(item)}
+                                            style={{ opacity: (item.out_of_stock || !isOpen) ? 0.5 : 1 }}
+                                        >
+                                            <Plus size={14} style={{ marginRight: '5px' }} /> Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             </main>
 
