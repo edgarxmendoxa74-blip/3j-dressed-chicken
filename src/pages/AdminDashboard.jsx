@@ -834,6 +834,58 @@ const AdminDashboard = () => {
             showMessage('Receipt generated! Check your print window.');
         };
 
+        const copyToClipboard = async (text, successMsg = 'Copied to clipboard!') => {
+            try {
+                await navigator.clipboard.writeText(text);
+                showMessage(successMsg);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                showMessage('Failed to copy. Please try again.');
+            }
+        };
+
+        const copyCustomerDetails = (order) => {
+            let details = `Customer: ${order.customer_details?.name || 'N/A'}\n`;
+            if (order.customer_details?.phone) details += `Phone: ${order.customer_details.phone}\n`;
+            if (order.customer_details?.table_number) details += `Table: ${order.customer_details.table_number}\n`;
+            if (order.customer_details?.address) details += `Address: ${order.customer_details.address}\n`;
+            if (order.customer_details?.landmark) details += `Landmark: ${order.customer_details.landmark}\n`;
+            if (order.customer_details?.pickup_time) details += `Pickup Time: ${order.customer_details.pickup_time}\n`;
+            copyToClipboard(details, 'Customer details copied!');
+        };
+
+        const copyOrderItems = (order) => {
+            let itemsText = 'Order Items:\n';
+            itemsText += (order.items || []).map((item, i) => `${i + 1}. ${item}`).join('\n');
+            copyToClipboard(itemsText, 'Items list copied!');
+        };
+
+        const copyFullOrder = (order) => {
+            let fullText = `ORDER SUMMARY\n`;
+            fullText += `${'='.repeat(40)}\n\n`;
+            fullText += `Order Type: ${(order.order_type || 'N/A').toUpperCase()}\n`;
+            fullText += `Payment: ${order.payment_method || 'N/A'}\n`;
+            fullText += `Date: ${new Date(order.timestamp).toLocaleString()}\n`;
+            fullText += `Status: ${order.status || 'Pending'}\n\n`;
+
+            fullText += `CUSTOMER DETAILS:\n`;
+            fullText += `Name: ${order.customer_details?.name || 'N/A'}\n`;
+            if (order.customer_details?.phone) fullText += `Phone: ${order.customer_details.phone}\n`;
+            if (order.customer_details?.table_number) fullText += `Table: ${order.customer_details.table_number}\n`;
+            if (order.customer_details?.address) fullText += `Address: ${order.customer_details.address}\n`;
+            if (order.customer_details?.landmark) fullText += `Landmark: ${order.customer_details.landmark}\n`;
+            if (order.customer_details?.pickup_time) fullText += `Pickup Time: ${order.customer_details.pickup_time}\n`;
+
+            fullText += `\nORDER ITEMS:\n`;
+            fullText += (order.items || []).map((item, i) => `${i + 1}. ${item}`).join('\n');
+
+            fullText += `\n\n${'='.repeat(40)}\n`;
+            fullText += `TOTAL AMOUNT: ₱${order.total_amount}\n`;
+            fullText += `${'='.repeat(40)}`;
+
+            copyToClipboard(fullText, 'Full order copied!');
+        };
+
         return (
             <div className="admin-card" style={{ background: 'white', padding: '30px', borderRadius: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
@@ -895,6 +947,9 @@ const AdminDashboard = () => {
                                                 <Save size={14} /> Save
                                             </button>
                                         </div>
+                                        <button onClick={() => copyCustomerDetails(order)} style={{ color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer' }} title="Copy Customer Details"><Copy size={18} /></button>
+                                        <button onClick={() => copyOrderItems(order)} style={{ color: '#7c3aed', background: 'none', border: 'none', cursor: 'pointer' }} title="Copy Items List"><Copy size={18} /></button>
+                                        <button onClick={() => copyFullOrder(order)} style={{ color: '#059669', background: 'none', border: 'none', cursor: 'pointer' }} title="Copy Full Order"><Copy size={18} /></button>
                                         <button onClick={() => printReceipt(order)} style={{ color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer' }} title="Print Receipt"><Printer size={18} /></button>
                                         <button onClick={() => deleteOrder(order.id)} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }} title="Delete Order"><Trash2 size={18} /></button>
                                     </div>
