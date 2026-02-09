@@ -634,12 +634,7 @@ Thank you!`.trim();
                         </p>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                        <Link to="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 600 }}>Home</Link>
-                        <Link to="/about" style={{ color: 'white', textDecoration: 'none', fontWeight: 600 }}>About Us</Link>
-                        <Link to="/contact" style={{ color: 'white', textDecoration: 'none', fontWeight: 600 }}>Contact</Link>
-                        <Link to="/admin" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 600 }}>Admin Login</Link>
-                    </div>
+
 
                     <div style={{ display: 'flex', gap: '20px' }}>
                         <a href="https://facebook.com/3jdressedchicken" target="_blank" rel="noreferrer" style={{ color: 'rgba(255,255,255,0.6)', transition: 'color 0.3s' }}>
