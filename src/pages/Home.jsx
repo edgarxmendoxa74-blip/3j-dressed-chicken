@@ -24,6 +24,19 @@ import { Link } from 'react-router-dom';
 import { categories as initialCategories, menuItems } from '../data/MenuData';
 import { supabase } from '../supabaseClient';
 
+// Delivery locations with charge from store
+const DELIVERY_LOCATIONS = [
+    { name: 'Poblacion', charge: 35 },
+    { name: 'San Antonio', charge: 35 },
+    { name: 'Mangorocoro', charge: 35 },
+    { name: 'Progreso', charge: 35 },
+    { name: 'Pili', charge: 35 },
+    { name: 'Lanjagan', charge: 35 },
+    { name: 'Taguhangin', charge: 35 },
+    { name: 'Bugtong Bukid', charge: 35 },
+    { name: 'Brgy. Rojas', charge: 35 }
+];
+
 const Home = () => {
     const [cart, setCart] = useState([]);
     const [items, setItems] = useState([]);
@@ -185,17 +198,32 @@ const Home = () => {
         table_number: '',
         address: '',
         landmark: '',
-        pickup_time: ''
+        pickup_time: '',
+        delivery_location: ''
     });
 
     const openProductSelection = (item) => {
         const firstVariation = (item.variations || []).find(v => !v.disabled);
-        const firstFlavor = (item.flavors || [])[0] || null;
+
+        let initialFlavor = [];
+        if (item.flavors && item.flavors.length > 0) {
+            const first = item.flavors[0];
+            const name = typeof first === 'string' ? first : (first.disabled ? null : first.name);
+            // Search for first non-disabled if first is disabled
+            if (!name) {
+                const valid = item.flavors.find(f => typeof f === 'string' || !f.disabled);
+                if (valid) {
+                    initialFlavor = [typeof valid === 'string' ? valid : valid.name];
+                }
+            } else {
+                initialFlavor = [name];
+            }
+        }
 
         setSelectedProduct(item);
         setSelectionOptions({
             variation: firstVariation || null,
-            flavors: [],
+            flavors: initialFlavor,
             addons: []
         });
     };
@@ -241,8 +269,16 @@ const Home = () => {
         setCart(cart.filter(i => i.cartItemId !== cartItemId));
     };
 
-    const cartTotal = cart.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
+    const cartSubtotal = cart.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+    // Calculate delivery charge based on selected location
+    const getDeliveryCharge = () => {
+        const selectedLocation = DELIVERY_LOCATIONS.find(loc => loc.name === customerDetails.delivery_location);
+        return selectedLocation ? selectedLocation.charge : 0;
+    };
+    const deliveryCharge = orderType === 'delivery' ? getDeliveryCharge() : 0;
+    const cartTotal = cartSubtotal + deliveryCharge;
 
     const copyOrderDetails = async () => {
         const itemDetails = cart.map(item => {
@@ -256,9 +292,15 @@ const Home = () => {
         let customerInfoStr = `Name: ${customerDetails.name}`;
         if (orderType === 'dine-in') customerInfoStr += `\nTable Number: ${customerDetails.table_number}`;
         if (orderType === 'pickup') customerInfoStr += `\nPhone: ${customerDetails.phone}\nPickup Time: ${customerDetails.pickup_time}`;
-        if (orderType === 'delivery') customerInfoStr += `\nPhone: ${customerDetails.phone}\nAddress: ${customerDetails.address}\nLandmark: ${customerDetails.landmark}`;
+        if (orderType === 'delivery') customerInfoStr += `\nPhone: ${customerDetails.phone}\nDelivery Location: ${customerDetails.delivery_location}\nAddress: ${customerDetails.address}\nLandmark: ${customerDetails.landmark}`;
 
-        const orderDetailsText = `ORDER SUMMARY\n${'='.repeat(40)}\n\nOrder Type: ${orderType.toUpperCase()}\nPayment Method: ${paymentMethod}\n\nCustomer Details:\n${customerInfoStr}\n\nItem Details:\n${itemDetails.map((item, i) => `${i + 1}. ${item}`).join('\n')}\n\n${'='.repeat(40)}\nTOTAL AMOUNT: ${cartTotal}\n${'='.repeat(40)}`;
+        let totalBreakdown = `Subtotal: ₱${cartSubtotal}`;
+        if (orderType === 'delivery' && deliveryCharge > 0) {
+            totalBreakdown += `\nDelivery Charge (${customerDetails.delivery_location}): ₱${deliveryCharge}`;
+        }
+        totalBreakdown += `\nTOTAL AMOUNT: ₱${cartTotal}`;
+
+        const orderDetailsText = `ORDER SUMMARY\n${'='.repeat(40)}\n\nOrder Type: ${orderType.toUpperCase()}\nPayment Method: ${paymentMethod}\n\nCustomer Details:\n${customerInfoStr}\n\nItem Details:\n${itemDetails.map((item, i) => `${i + 1}. ${item}`).join('\n')}\n\n${'='.repeat(40)}\n${totalBreakdown}\n${'='.repeat(40)}`;
 
         try {
             await navigator.clipboard.writeText(orderDetailsText);
@@ -277,10 +319,10 @@ const Home = () => {
         }
 
         // Validate details...
-        const { name, phone, table_number, address, pickup_time } = customerDetails;
+        const { name, phone, table_number, address, pickup_time, delivery_location } = customerDetails;
         if (orderType === 'dine-in' && (!name || !table_number)) { alert('Please provide your Name and Table Number.'); return; }
         if (orderType === 'pickup' && (!name || !phone || !pickup_time)) { alert('Please provide Name, Phone Number, and Pickup Time.'); return; }
-        if (orderType === 'delivery' && (!name || !phone || !address)) { alert('Please provide Name, Phone Number, and Delivery Address.'); return; }
+        if (orderType === 'delivery' && (!name || !phone || !delivery_location || !address)) { alert('Please provide Name, Phone Number, Delivery Location, and Address.'); return; }
 
         if (!paymentMethod) { alert('Please select a payment method.'); return; }
 
@@ -322,7 +364,13 @@ const Home = () => {
         let customerInfoStr = `Name: ${customerDetails.name}`;
         if (orderType === 'dine-in') customerInfoStr += `\nTable Number: ${customerDetails.table_number}`;
         if (orderType === 'pickup') customerInfoStr += `\nPhone: ${customerDetails.phone}\nPickup Time: ${customerDetails.pickup_time}`;
-        if (orderType === 'delivery') customerInfoStr += `\nPhone: ${customerDetails.phone}\nAddress: ${customerDetails.address}\nLandmark: ${customerDetails.landmark}`;
+        if (orderType === 'delivery') customerInfoStr += `\nPhone: ${customerDetails.phone}\nDelivery Location: ${customerDetails.delivery_location}\nAddress: ${customerDetails.address}\nLandmark: ${customerDetails.landmark}`;
+
+        let amountBreakdown = `Subtotal: ₱${cartSubtotal}`;
+        if (orderType === 'delivery' && deliveryCharge > 0) {
+            amountBreakdown += `\nDelivery Charge: ₱${deliveryCharge}`;
+        }
+        amountBreakdown += `\nTOTAL: ₱${cartTotal}`;
 
         const message = `
 Hello! I'd like to place an order:
@@ -336,7 +384,7 @@ ${customerInfoStr}
 Item Details:
 ${orderDetailsStr}
 
-TOTAL AMOUNT: ${cartTotal}
+${amountBreakdown}
 
 Thank you!`.trim();
 
@@ -575,6 +623,39 @@ Thank you!`.trim();
                 </div>
             </main>
 
+            {/* Footer */}
+            <footer style={{ background: '#000000', color: 'white', padding: '60px 0 30px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '30px' }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <img src={storeSettings.logo_url || "/logo.jpg"} alt="3J Logo" style={{ height: '80px', marginBottom: '20px', borderRadius: '50%' }} />
+                        <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.5rem', color: 'var(--gold)', margin: '0 0 10px' }}>{storeSettings.store_name}</h3>
+                        <p style={{ color: 'rgba(255,255,255,0.6)', maxWidth: '400px', margin: '0 auto', fontSize: '0.9rem' }}>
+                            "Matinlo kag Garantisado" - Providing the freshest quality chicken for your family.
+                        </p>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                        <Link to="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 600 }}>Home</Link>
+                        <Link to="/about" style={{ color: 'white', textDecoration: 'none', fontWeight: 600 }}>About Us</Link>
+                        <Link to="/contact" style={{ color: 'white', textDecoration: 'none', fontWeight: 600 }}>Contact</Link>
+                        <Link to="/admin" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 600 }}>Admin Login</Link>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '20px' }}>
+                        <a href="https://facebook.com/3jdressedchicken" target="_blank" rel="noreferrer" style={{ color: 'rgba(255,255,255,0.6)', transition: 'color 0.3s' }}>
+                            <Facebook size={24} />
+                        </a>
+                        <a href={`tel:${storeSettings.contact}`} style={{ color: 'rgba(255,255,255,0.6)', transition: 'color 0.3s' }}>
+                            <Phone size={24} />
+                        </a>
+                    </div>
+
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', width: '100%', paddingTop: '30px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem' }}>
+                        <p>© {new Date().getFullYear()} {storeSettings.store_name}. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
+
             {/* Selection Modal (Simplified for brevity, assumes logic same as before) */}
             {selectedProduct && (
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
@@ -642,7 +723,7 @@ Thank you!`.trim();
                         )}
                         {selectedProduct.flavors && selectedProduct.flavors.length > 0 && (
                             <div style={{ marginBottom: '20px' }}>
-                                <label style={{ fontWeight: 700, display: 'block', marginBottom: '10px' }}>Select Flavors (You can pick multiple)</label>
+                                <label style={{ fontWeight: 700, display: 'block', marginBottom: '10px' }}>Select Flavor</label>
                                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                                     {selectedProduct.flavors.map(f => {
                                         const name = typeof f === 'string' ? f : f.name;
@@ -654,14 +735,8 @@ Thank you!`.trim();
                                             <button
                                                 key={name}
                                                 onClick={() => {
-                                                    const exists = selectionOptions.flavors.includes(name);
-                                                    let newFlavors;
-                                                    if (exists) {
-                                                        newFlavors = selectionOptions.flavors.filter(x => x !== name);
-                                                    } else {
-                                                        newFlavors = [...selectionOptions.flavors, name];
-                                                    }
-                                                    setSelectionOptions({ ...selectionOptions, flavors: newFlavors });
+                                                    // Single select logic
+                                                    setSelectionOptions({ ...selectionOptions, flavors: [name] });
                                                 }}
                                                 style={{
                                                     padding: '8px 15px', borderRadius: '10px',
@@ -788,15 +863,84 @@ Thank you!`.trim();
                                         {orderType === 'dine-in' && <div><label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '5px', fontWeight: 600 }}>Table Number</label><input type="text" value={customerDetails.table_number} onChange={(e) => setCustomerDetails({ ...customerDetails, table_number: e.target.value })} style={{ padding: '12px', width: '100%', borderRadius: '10px', border: '1px solid #e2e8f0' }} /></div>}
                                         {orderType !== 'dine-in' && <div><label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '5px', fontWeight: 600 }}>Phone</label><input type="tel" value={customerDetails.phone} onChange={(e) => setCustomerDetails({ ...customerDetails, phone: e.target.value })} style={{ padding: '12px', width: '100%', borderRadius: '10px', border: '1px solid #e2e8f0' }} /></div>}
                                         {orderType === 'pickup' && <div><label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '5px', fontWeight: 600 }}>Time</label><input type="time" value={customerDetails.pickup_time} onChange={(e) => setCustomerDetails({ ...customerDetails, pickup_time: e.target.value })} style={{ padding: '12px', width: '100%', borderRadius: '10px', border: '1px solid #e2e8f0' }} /></div>}
-                                        {orderType === 'delivery' && <div><label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '5px', fontWeight: 600 }}>Address</label><textarea value={customerDetails.address} onChange={(e) => setCustomerDetails({ ...customerDetails, address: e.target.value })} style={{ padding: '12px', width: '100%', borderRadius: '10px', border: '1px solid #e2e8f0' }} /></div>}
+                                        {orderType === 'delivery' && (
+                                            <>
+                                                <div>
+                                                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '5px', fontWeight: 600 }}>
+                                                        Delivery Location <span style={{ color: '#ef4444' }}>*</span>
+                                                    </label>
+                                                    <select
+                                                        value={customerDetails.delivery_location}
+                                                        onChange={(e) => setCustomerDetails({ ...customerDetails, delivery_location: e.target.value })}
+                                                        style={{
+                                                            padding: '12px',
+                                                            width: '100%',
+                                                            borderRadius: '10px',
+                                                            border: '1px solid #e2e8f0',
+                                                            background: 'white',
+                                                            fontSize: '1rem',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                    >
+                                                        <option value="">-- Select Barangay --</option>
+                                                        {DELIVERY_LOCATIONS.map(loc => (
+                                                            <option key={loc.name} value={loc.name}>
+                                                                {loc.name} (₱{loc.charge} delivery fee)
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {customerDetails.delivery_location && (
+                                                        <p style={{ fontSize: '0.85rem', color: '#059669', marginTop: '8px', fontWeight: 600 }}>
+                                                            📍 Delivery Charge: ₱{DELIVERY_LOCATIONS.find(l => l.name === customerDetails.delivery_location)?.charge || 0}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '5px', fontWeight: 600 }}>
+                                                        Complete Address <span style={{ color: '#ef4444' }}>*</span>
+                                                    </label>
+                                                    <textarea
+                                                        value={customerDetails.address}
+                                                        onChange={(e) => setCustomerDetails({ ...customerDetails, address: e.target.value })}
+                                                        placeholder="House/Lot No., Street, Subdivision..."
+                                                        style={{ padding: '12px', width: '100%', borderRadius: '10px', border: '1px solid #e2e8f0', minHeight: '80px' }}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '5px', fontWeight: 600 }}>Landmark (Optional)</label>
+                                                    <input
+                                                        type="text"
+                                                        value={customerDetails.landmark}
+                                                        onChange={(e) => setCustomerDetails({ ...customerDetails, landmark: e.target.value })}
+                                                        placeholder="Near school, beside sari-sari store, etc."
+                                                        style={{ padding: '12px', width: '100%', borderRadius: '10px', border: '1px solid #e2e8f0' }}
+                                                    />
+                                                </div>
+                                            </>
+                                        )}
                                         {!['dine-in', 'pickup', 'delivery'].includes(orderType) && <div><label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '5px', fontWeight: 600 }}>Notes / Instructions</label><textarea value={customerDetails.landmark} onChange={(e) => setCustomerDetails({ ...customerDetails, landmark: e.target.value })} placeholder="Any specific requests..." style={{ padding: '12px', width: '100%', borderRadius: '10px', border: '1px solid #e2e8f0' }} /></div>}
                                     </div>
                                 </div>
                             )}
 
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', padding: '15px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-muted)' }}>Total Amount:</span>
-                                <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)' }}>₱{cartTotal}</span>
+                            {/* Order Total Breakdown */}
+                            <div style={{ marginBottom: '20px', padding: '15px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: orderType === 'delivery' && deliveryCharge > 0 ? '10px' : '0' }}>
+                                    <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-muted)' }}>Subtotal:</span>
+                                    <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--primary)' }}>₱{cartSubtotal}</span>
+                                </div>
+                                {orderType === 'delivery' && deliveryCharge > 0 && (
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px dashed #e2e8f0' }}>
+                                        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#059669' }}>
+                                            🚚 Delivery Charge ({customerDetails.delivery_location}):
+                                        </span>
+                                        <span style={{ fontSize: '1rem', fontWeight: 700, color: '#059669' }}>₱{deliveryCharge}</span>
+                                    </div>
+                                )}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--primary)' }}>Total Amount:</span>
+                                    <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)' }}>₱{cartTotal}</span>
+                                </div>
                             </div>
 
                             {/* Copy Order Button - Required before proceeding */}
