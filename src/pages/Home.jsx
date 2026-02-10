@@ -702,7 +702,7 @@ Thank you!`;
 
                         {selectedProduct.variations && selectedProduct.variations.length > 0 && (
                             <div style={{ marginBottom: '20px' }}>
-                                <label style={{ fontWeight: 700, display: 'block', marginBottom: '10px' }}>Choose Size/Variation</label>
+                                <label style={{ fontWeight: 700, display: 'block', marginBottom: '10px' }}>Choose</label>
                                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                                     {selectedProduct.variations.map(v => (
                                         <button
@@ -757,7 +757,7 @@ Thank you!`;
                         )}
                         {selectedProduct.flavors && selectedProduct.flavors.length > 0 && (
                             <div style={{ marginBottom: '20px' }}>
-                                <label style={{ fontWeight: 700, display: 'block', marginBottom: '10px' }}>{selectedProduct.optionsLabel || selectedProduct.options_label || 'Choose Flavor'}</label>
+                                <label style={{ fontWeight: 700, display: 'block', marginBottom: '10px' }}>{selectedProduct.optionsLabel || selectedProduct.options_label || 'Choose'}</label>
                                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                                     {selectedProduct.flavors.map(f => {
                                         const name = typeof f === 'string' ? f : f.name;
