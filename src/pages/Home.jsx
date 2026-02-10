@@ -302,17 +302,61 @@ const Home = () => {
 
         const orderDetailsText = `ORDER SUMMARY\n${'='.repeat(40)}\n\nOrder Type: ${orderType.toUpperCase()}\nPayment Method: ${paymentMethod}\n\nCustomer Details:\n${customerInfoStr}\n\nItem Details:\n${itemDetails.map((item, i) => `${i + 1}. ${item}`).join('\n')}\n\n${'='.repeat(40)}\n${totalBreakdown}\n${'='.repeat(40)}`;
 
-        try {
-            await navigator.clipboard.writeText(orderDetailsText);
+        const copied = await copyToClipboard(orderDetailsText);
+        if (copied) {
             setOrderCopied(true);
             alert('✓ Order details copied to clipboard!');
-        } catch (err) {
-            console.error('Failed to copy:', err);
+        } else {
             alert('Failed to copy. Please try again.');
         }
     };
 
-    const handlePlaceOrder = () => {
+    // Helper: Reliably copy text to clipboard (works on iOS & Android)
+    const copyToClipboard = async (text) => {
+        // Method 1: Modern Clipboard API
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (err) {
+                console.warn('Clipboard API failed, trying fallback:', err);
+            }
+        }
+
+        // Method 2: Fallback using textarea (works on most mobile browsers)
+        try {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+
+            // iOS needs special selection handling
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if (isIOS) {
+                const range = document.createRange();
+                range.selectNodeContents(textarea);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                textarea.setSelectionRange(0, 999999);
+            } else {
+                textarea.select();
+            }
+
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            return true;
+        } catch (err) {
+            console.error('Fallback copy failed:', err);
+            return false;
+        }
+    };
+
+    const handlePlaceOrder = async () => {
         if (!orderType) {
             alert('Please select an order type (Dine-in, Pickup, or Delivery).');
             return;
@@ -356,7 +400,6 @@ const Home = () => {
             localStorage.setItem('orders', JSON.stringify([...existingOrders, localOrder]));
         } catch (err) {
             console.warn('Failed to save order to localStorage (quota exceeded?):', err);
-            // Ignore error so ordering proceeds
         }
 
         // --- PREPARE MESSENGER MSG ---
@@ -372,8 +415,7 @@ const Home = () => {
         }
         amountBreakdown += `\nTOTAL: ₱${cartTotal}`;
 
-        const message = `
-Hello! I'd like to place an order:
+        const message = `Hello! I'd like to place an order:
 
 Order Type: ${orderType.toUpperCase()}
 Payment Method: ${paymentMethod}
@@ -386,52 +428,49 @@ ${orderDetailsStr}
 
 ${amountBreakdown}
 
-Thank you!`.trim();
+Thank you!`;
 
+        // Facebook Page ID for Messenger
         const pageId = '61587544585902';
-        const encodedMessage = encodeURIComponent(message);
 
-        // Detect mobile device
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const isAndroid = /Android/i.test(navigator.userAgent);
+        // Step 1: Copy order details to clipboard FIRST (before opening Messenger)
+        const copied = await copyToClipboard(message);
 
-        // Close checkout modal first
+        // Step 2: Close checkout modal
         setIsCheckoutOpen(false);
 
-        if (isMobile) {
-            // Mobile: Use deep links to open Messenger app
-            if (isIOS) {
-                // iOS: Try fb-messenger scheme
-                const messengerAppUrl = `fb-messenger://user-thread/${pageId}`;
-                window.location.href = messengerAppUrl;
-
-                // Fallback to web version WITH text if app doesn't open
-                setTimeout(() => {
-                    if (document.visibilityState !== 'hidden') {
-                        window.open(`https://www.messenger.com/t/${pageId}/?text=${encodedMessage}`, '_blank');
-                    }
-                }, 2000);
-            } else if (isAndroid) {
-                // Android: Use intent URL
-                const intentUrl = `intent://user/${pageId}#Intent;scheme=fb-messenger;package=com.facebook.orca;end`;
-                window.location.href = intentUrl;
-
-                // Fallback to web version WITH text
-                setTimeout(() => {
-                    if (document.visibilityState !== 'hidden') {
-                        window.open(`https://www.messenger.com/t/${pageId}/?text=${encodedMessage}`, '_blank');
-                    }
-                }, 1500);
-            } else {
-                // Other mobile: Use m.me WITH text fallback
-                window.location.href = `https://m.me/${pageId}?text=${encodedMessage}`;
-            }
+        // Step 3: Show instruction to user
+        if (copied) {
+            alert('✅ Order details copied to clipboard!\n\nMessenger will open now. Just PASTE (long-press → Paste) your order in the chat and send it.');
         } else {
-            // Desktop: Use m.me URL which works well with text
-            const messengerUrl = `https://m.me/${pageId}?text=${encodedMessage}`;
+            alert('⚠️ Could not copy automatically.\n\nMessenger will open now. Please type or describe your order in the chat.\n\nYou can also go back and use the "Copy Order Details" button to copy it manually.');
+        }
+
+        // Step 4: Open Messenger using the most reliable method for each platform
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        // Use m.me link — this is the OFFICIAL Facebook short URL for Messenger
+        // It correctly opens the Messenger app on mobile or messenger.com on desktop
+        const messengerUrl = `https://m.me/${pageId}`;
+
+        if (isMobile) {
+            // On mobile, use window.location.href for m.me
+            // This lets the OS handle the deep link naturally:
+            //   - If Messenger app is installed → opens the app
+            //   - If not installed → opens in browser
+            window.location.href = messengerUrl;
+        } else {
+            // Desktop: open in new tab
             window.open(messengerUrl, '_blank');
         }
+
+        // Clear cart after successful order
+        setTimeout(() => {
+            setCart([]);
+            setCustomerDetails({ name: '', phone: '', table_number: '', address: '', landmark: '', pickup_time: '', delivery_location: '' });
+            setOrderType('');
+            setPaymentMethod('');
+        }, 1000);
     };
 
     const formatTime = (timeStr) => {
