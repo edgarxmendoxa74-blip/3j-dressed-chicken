@@ -531,8 +531,7 @@ const AdminDashboard = () => {
     // --- COMPONENT: ORDER TYPE MANAGER ---
     const OrderTypeManager = () => {
         const FIXED_TYPES = [
-            { id: 'dine-in', name: 'Dine-in', defaultActive: true },
-            { id: 'pickup', name: 'Take Out', defaultActive: true },
+            { id: 'pickup', name: 'Pick Up', defaultActive: true },
             { id: 'delivery', name: 'Delivery', defaultActive: true }
         ];
 
@@ -586,7 +585,7 @@ const AdminDashboard = () => {
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     color: 'white'
                                 }}>
-                                    {t.id === 'dine-in' && <Utensils size={20} />}
+
                                     {t.id === 'pickup' && <ShoppingBag size={20} />}
                                     {t.id === 'delivery' && <Truck size={20} />}
                                 </div>
@@ -804,9 +803,8 @@ const AdminDashboard = () => {
                         <div>
                             <strong>OR#:</strong> ${order.id.toString().slice(-6).toUpperCase()}<br>
                             <strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}<br>
-                            <strong>Type:</strong> ${(order.order_type || 'Dine-in').toUpperCase()}<br>
+                            <strong>Type:</strong> ${(order.order_type || 'N/A').toUpperCase()}<br>
                             <strong>Cust:</strong> ${order.customer_details?.name}
-                            ${order.customer_details?.table_number ? `<br><strong>Table:</strong> ${order.customer_details.table_number}` : ''}
                         </div>
                         <div class="divider"></div>
                         <div style="font-weight:bold; margin-bottom: 5px;">ITEMS:</div>
@@ -847,7 +845,6 @@ const AdminDashboard = () => {
         const copyCustomerDetails = (order) => {
             let details = `Customer: ${order.customer_details?.name || 'N/A'}\n`;
             if (order.customer_details?.phone) details += `Phone: ${order.customer_details.phone}\n`;
-            if (order.customer_details?.table_number) details += `Table: ${order.customer_details.table_number}\n`;
             if (order.customer_details?.address) details += `Address: ${order.customer_details.address}\n`;
             if (order.customer_details?.landmark) details += `Landmark: ${order.customer_details.landmark}\n`;
             if (order.customer_details?.pickup_time) details += `Pickup Time: ${order.customer_details.pickup_time}\n`;
@@ -871,7 +868,6 @@ const AdminDashboard = () => {
             fullText += `CUSTOMER DETAILS:\n`;
             fullText += `Name: ${order.customer_details?.name || 'N/A'}\n`;
             if (order.customer_details?.phone) fullText += `Phone: ${order.customer_details.phone}\n`;
-            if (order.customer_details?.table_number) fullText += `Table: ${order.customer_details.table_number}\n`;
             if (order.customer_details?.address) fullText += `Address: ${order.customer_details.address}\n`;
             if (order.customer_details?.landmark) fullText += `Landmark: ${order.customer_details.landmark}\n`;
             if (order.customer_details?.pickup_time) fullText += `Pickup Time: ${order.customer_details.pickup_time}\n`;
@@ -957,7 +953,6 @@ const AdminDashboard = () => {
                                 <div style={{ marginBottom: '10px', fontSize: '0.95rem' }}>
                                     <strong>{order.customer_details?.name}</strong> • {order.payment_method}
                                     {order.customer_details?.phone && <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{order.customer_details.phone}</div>}
-                                    {order.customer_details?.tableNumber && <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Table: {order.customer_details.tableNumber}</div>}
                                     {order.customer_details?.address && <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Address: {order.customer_details.address}</div>}
                                 </div>
                                 <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '12px', fontSize: '0.9rem' }}>
