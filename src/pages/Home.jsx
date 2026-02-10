@@ -883,8 +883,8 @@ Thank you!`;
                             <div style={{ marginBottom: '30px' }}>
                                 <label style={{ fontWeight: 700, fontSize: '1rem', display: 'block', marginBottom: '15px' }}>Select Order Type</label>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '10px' }}>
-                                    {orderTypes.filter(type => type.id !== 'dine-in' && type.id !== 'take-out').map(type => (
-                                        <button key={type.id} onClick={() => setOrderType(type.id)} style={{ padding: '8px', fontSize: '0.9rem', borderRadius: '12px', border: '1px solid var(--primary)', background: orderType === type.id ? 'var(--primary)' : 'white', color: orderType === type.id ? 'white' : 'var(--primary)', fontWeight: 700, cursor: 'pointer' }}>{type.name}</button>
+                                    {orderTypes.filter(type => !['dine-in', 'dine in', 'take-out', 'take out', 'takeout'].includes(type.name.toLowerCase())).map(type => (
+                                        <button key={type.id} onClick={() => setOrderType(type.name.toLowerCase())} style={{ padding: '8px', fontSize: '0.9rem', borderRadius: '12px', border: '1px solid var(--primary)', background: orderType === type.name.toLowerCase() ? 'var(--primary)' : 'white', color: orderType === type.name.toLowerCase() ? 'white' : 'var(--primary)', fontWeight: 700, cursor: 'pointer' }}>{type.name}</button>
                                     ))}
                                 </div>
                             </div>
