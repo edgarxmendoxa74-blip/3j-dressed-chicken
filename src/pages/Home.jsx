@@ -718,7 +718,7 @@ Thank you!`.trim();
                         )}
                         {selectedProduct.flavors && selectedProduct.flavors.length > 0 && (
                             <div style={{ marginBottom: '20px' }}>
-                                <label style={{ fontWeight: 700, display: 'block', marginBottom: '10px' }}>Select Flavor</label>
+                                <label style={{ fontWeight: 700, display: 'block', marginBottom: '10px' }}>{selectedProduct.optionsLabel || selectedProduct.options_label || 'Select Flavor'}</label>
                                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                                     {selectedProduct.flavors.map(f => {
                                         const name = typeof f === 'string' ? f : f.name;

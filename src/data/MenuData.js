@@ -15,9 +15,12 @@ export const menuItems = [
         price: 220,
         image: 'https://images.unsplash.com/photo-1606787366850-de6330128bfc?auto=format&fit=crop&w=400&q=80',
         variations: [
-            { name: 'Regular Size', price: 210 },
-            { name: 'Large Size', price: 230 }
-        ]
+            { name: '1kg', price: 220 },
+            { name: '1/2 kg', price: 110 },
+            { name: '1/4 kg', price: 60 }
+        ],
+        flavors: ["Whole", "Cuts"],
+        optionsLabel: "Preparation"
     },
     {
         id: 2,
