@@ -17,6 +17,7 @@ import {
     Trash2,
     Copy,
     CreditCard,
+    Banknote,
     ChevronLeft,
     ChevronRight
 } from 'lucide-react';
@@ -34,7 +35,15 @@ const DELIVERY_LOCATIONS = [
     { name: 'Lanjagan', charge: 35 },
     { name: 'Taguhangin', charge: 35 },
     { name: 'Bugtong Bukid', charge: 35 },
-    { name: 'Brgy. Rojas', charge: 35 }
+    { name: 'Brgy. Rojas', charge: 35 },
+    { name: 'Pinantan Elizalde', charge: 35 },
+    { name: 'Puente Bunglas', charge: 35 },
+    { name: 'Bat-os', charge: 35 },
+    { name: 'Malayu-an', charge: 40 },
+    { name: 'Barrido', charge: 40 },
+    { name: 'Culasi', charge: 45 },
+    { name: 'Luca', charge: 45 },
+    { name: 'Bay-ang', charge: 50 }
 ];
 
 const Home = () => {
@@ -46,8 +55,7 @@ const Home = () => {
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
     const [paymentSettings, setPaymentSettings] = useState([]);
     const [orderTypes, setOrderTypes] = useState([
-        { id: 'dine-in', name: 'Dine-in' },
-        { id: 'pickup', name: 'Take Out' },
+        { id: 'pickup', name: 'Pickup' },
         { id: 'delivery', name: 'Delivery' }
     ]);
     const [storeSettings, setStoreSettings] = useState({
@@ -564,7 +572,7 @@ Thank you!`;
             <section className="hero-section" style={{ overflow: 'hidden' }}>
                 <div className="container hero-split">
                     <div className="hero-content animate-fade-up">
-                        <h1 style={{ color: 'var(--accent)', fontWeight: 900, fontSize: '4rem', textTransform: 'uppercase', marginBottom: '10px' }}>
+                        <h1 style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--accent)', fontWeight: 900, fontSize: '4rem', textTransform: 'uppercase', marginBottom: '10px' }}>
                             Freshly Dressed <span style={{ color: 'var(--primary)' }}>Chicken</span>
                         </h1>
                         <p style={{
@@ -635,8 +643,8 @@ Thank you!`;
                                 <div className="menu-item-info">
                                     <h3 className="menu-item-name">{item.name}</h3>
                                     <p className="menu-item-desc">{item.description}</p>
-                                    <div className="menu-item-footer">
-                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <div className="menu-item-footer" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '10px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                             {item.promo_price ? (
                                                 <>
                                                     <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '0.8rem' }}>₱{item.price}</span>
@@ -647,10 +655,23 @@ Thank you!`;
                                             )}
                                         </div>
                                         <button
-                                            className="btn-primary btn-sm"
+                                            className="btn-success btn-sm"
                                             disabled={item.out_of_stock || !isOpen}
                                             onClick={() => openProductSelection(item)}
-                                            style={{ opacity: (item.out_of_stock || !isOpen) ? 0.5 : 1 }}
+                                            style={{
+                                                opacity: (item.out_of_stock || !isOpen) ? 0.5 : 1,
+                                                background: '#22c55e',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '10px',
+                                                borderRadius: '12px',
+                                                fontWeight: 700,
+                                                cursor: 'pointer',
+                                                width: '100%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}
                                         >
                                             <Plus size={14} style={{ marginRight: '5px' }} /> Add to Cart
                                         </button>
@@ -667,7 +688,7 @@ Thank you!`;
                 <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '30px' }}>
                     <div style={{ textAlign: 'center' }}>
                         <img src={storeSettings.logo_url || "/logo.jpg"} alt="3J Logo" style={{ height: '80px', marginBottom: '20px', borderRadius: '50%' }} />
-                        <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.5rem', color: 'var(--gold)', margin: '0 0 10px' }}>{storeSettings.store_name}</h3>
+                        <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.5rem', color: 'var(--gold)', margin: '0 0 10px' }}>{storeSettings.store_name}</h3>
                         <p style={{ color: 'rgba(255,255,255,0.6)', maxWidth: '400px', margin: '0 auto', fontSize: '0.9rem' }}>
                             "Matinlo kag Garantisado" - Providing the freshest quality chicken for your family.
                         </p>
@@ -819,10 +840,13 @@ Thank you!`;
                                             padding: '15px', borderRadius: '15px', border: '2px solid',
                                             borderColor: paymentMethod === 'Cash/COD' ? 'var(--primary)' : '#e2e8f0',
                                             background: paymentMethod === 'Cash/COD' ? '#f0f9ff' : 'white',
-                                            cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s'
+                                            cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center'
                                         }}
                                     >
-                                        <div style={{ fontSize: '1.5rem', marginBottom: '5px' }}>💵</div>
+                                        <div style={{ marginBottom: '8px', color: 'var(--primary)' }}><Banknote size={24} /></div>
                                         <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--primary)' }}>Cash / COD</div>
                                     </button>
                                     {paymentSettings.map(method => (
@@ -833,10 +857,13 @@ Thank you!`;
                                                 padding: '15px', borderRadius: '15px', border: '2px solid',
                                                 borderColor: paymentMethod === method.id ? 'var(--primary)' : '#e2e8f0',
                                                 background: paymentMethod === method.id ? '#f0f9ff' : 'white',
-                                                cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s'
+                                                cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center'
                                             }}
                                         >
-                                            <div style={{ fontSize: '1.5rem', marginBottom: '5px' }}>💳</div>
+                                            <div style={{ marginBottom: '8px', color: 'var(--primary)' }}><CreditCard size={24} /></div>
                                             <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--primary)' }}>{method.name}</div>
                                         </button>
                                     ))}
@@ -883,7 +910,7 @@ Thank you!`;
                             <div style={{ marginBottom: '30px' }}>
                                 <label style={{ fontWeight: 700, fontSize: '1rem', display: 'block', marginBottom: '15px' }}>Select Order Type</label>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '10px' }}>
-                                    {orderTypes.filter(type => !['dine-in', 'dine in', 'take-out', 'take out', 'takeout'].includes(type.name.toLowerCase())).map(type => (
+                                    {orderTypes.map(type => (
                                         <button key={type.id} onClick={() => setOrderType(type.name.toLowerCase())} style={{ padding: '8px', fontSize: '0.9rem', borderRadius: '12px', border: '1px solid var(--primary)', background: orderType === type.name.toLowerCase() ? 'var(--primary)' : 'white', color: orderType === type.name.toLowerCase() ? 'white' : 'var(--primary)', fontWeight: 700, cursor: 'pointer' }}>{type.name}</button>
                                     ))}
                                 </div>
