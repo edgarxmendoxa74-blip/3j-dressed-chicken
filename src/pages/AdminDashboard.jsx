@@ -1249,7 +1249,7 @@ const AdminDashboard = () => {
                     <SidebarItem icon={<LayoutDashboard size={20} />} label="General Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
                 </nav>
 
-                <button onClick={handleLogout} style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '12px', width: '100%', borderRadius: '10px', cursor: 'pointer', position: 'absolute', bottom: '30px', left: '20px', width: 'calc(100% - 40px)' }}>
+                <button onClick={handleLogout} style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '12px', borderRadius: '10px', cursor: 'pointer', position: 'absolute', bottom: '30px', left: '20px', width: 'calc(100% - 40px)' }}>
                     <LogOut size={20} /> Sign Out
                 </button>
             </aside>
