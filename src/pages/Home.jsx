@@ -76,26 +76,8 @@ const Home = () => {
     const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Store status logic
-    const isStoreOpen = () => {
-        if (storeSettings.manual_status === 'open') return true;
-        if (storeSettings.manual_status === 'closed') return false;
-
-        const now = new Date();
-        const currentTime = now.getHours() * 60 + now.getMinutes();
-
-        const [openH, openM] = (storeSettings.open_time || '16:00').split(':').map(Number);
-        const [closeH, closeM] = (storeSettings.close_time || '01:00').split(':').map(Number);
-
-        const openMinutes = openH * 60 + openM;
-        const closeMinutes = closeH * 60 + closeM;
-
-        if (closeMinutes < openMinutes) {
-            // Overnights (e.g., 4 PM to 1 AM)
-            return currentTime >= openMinutes || currentTime < closeMinutes;
-        }
-        return currentTime >= openMinutes && currentTime < closeMinutes;
-    };
+    // Store status logic - Store is always open for orders
+    const isStoreOpen = () => true;
 
     const isOpen = isStoreOpen();
 
@@ -492,14 +474,6 @@ Thank you!`;
 
     return (
         <div className="page-wrapper">
-            {/* Store Closed Overlay */}
-            {!isOpen && (
-                <div style={{ background: '#ef4444', color: 'white', textAlign: 'center', padding: '12px', position: 'sticky', top: 0, zIndex: 1200, fontWeight: 700, fontSize: '0.9rem' }}>
-                    <Clock size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                    WE ARE CURRENTLY CLOSED. Our operating hours are {formatTime(storeSettings.open_time) || '4:00 PM'} to {formatTime(storeSettings.close_time) || '1:00 AM'}. Orders are disabled.
-                </div>
-            )}
-
             <header className="app-header">
                 <div className="container header-container">
                     <Link to="/" className="brand">
